@@ -100,7 +100,7 @@ input:focus-visible,
 .brand-name {
   display: grid;
   color: #2e4058;
-  font-size: 19px;
+  font-size: 23px;
   font-weight: 750;
   letter-spacing: -0.8px;
   line-height: 1.1;
@@ -114,7 +114,7 @@ input:focus-visible,
 .brand-name small {
   margin-top: 4px;
   color: #8491a2;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.15px;
 }
@@ -126,7 +126,7 @@ input:focus-visible,
 .sidebar-heading {
   margin: 0 0 10px 11px;
   color: #98a3b1;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 750;
   letter-spacing: 1.15px;
 }
@@ -159,7 +159,7 @@ input:focus-visible,
 }
 
 .sidebar-nav-item > span:nth-of-type(1) {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 550;
 }
 
@@ -180,7 +180,7 @@ input:focus-visible,
 .sidebar-count {
   margin-left: auto;
   color: #94a0af;
-  font-size: 10px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -211,13 +211,13 @@ input:focus-visible,
   max-width: 160px;
   margin: 11px 0 8px;
   color: #5f6f83;
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1.55;
 }
 
 .sidebar-upload > a {
   color: var(--blue);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -235,7 +235,7 @@ input:focus-visible,
   padding: 13px 7px 2px;
   border-top: 1px solid var(--line);
   color: #8794a5;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .connection-dot {
@@ -269,12 +269,12 @@ input:focus-visible,
   align-items: center;
   gap: 9px;
   color: #7e8b9c;
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .topbar-overline {
   color: #52647a;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 750;
   letter-spacing: 1px;
 }
@@ -311,7 +311,7 @@ input:focus-visible,
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .manager-search input::placeholder {
@@ -356,7 +356,7 @@ input:focus-visible,
 .page-eyebrow {
   margin: 0 0 7px;
   color: #8794a5;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 750;
   letter-spacing: 1.1px;
 }
@@ -364,7 +364,7 @@ input:focus-visible,
 .page-heading h1 {
   margin: 0;
   color: #2b3d53;
-  font-size: 27px;
+  font-size: 31px;
   font-weight: 700;
   letter-spacing: -0.9px;
   line-height: 1.2;
@@ -373,7 +373,7 @@ input:focus-visible,
 .page-description {
   margin: 7px 0 0;
   color: #77869a;
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .primary-action {
@@ -388,7 +388,7 @@ input:focus-visible,
   border-radius: 6px;
   background: var(--blue);
   color: #fff;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 650;
   transition:
     background-color 140ms ease,
@@ -451,7 +451,7 @@ input:focus-visible,
 
 .overview-label {
   color: #8491a2;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.75px;
   white-space: nowrap;
@@ -459,7 +459,7 @@ input:focus-visible,
 
 .overview-copy strong {
   color: #33465c;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1;
 }
@@ -467,7 +467,7 @@ input:focus-visible,
 .overview-detail {
   margin-left: auto;
   color: #96a1af;
-  font-size: 9px;
+  font-size: 13px;
   text-align: right;
   white-space: nowrap;
 }
@@ -514,13 +514,13 @@ input:focus-visible,
 
 .upload-panel-copy strong {
   color: #35475d;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 650;
 }
 
 .upload-panel-copy > span {
   color: #8794a5;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .upload-panel-copy b {
@@ -538,14 +538,14 @@ input:focus-visible,
 
 .upload-supported > span {
   color: #97a2b0;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.8px;
 }
 
 .upload-supported strong {
   color: #65758a;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 550;
 }
 
@@ -568,7 +568,7 @@ input:focus-visible,
   background: var(--surface);
   color: #586a80;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   transition:
@@ -617,14 +617,14 @@ input:focus-visible,
 .files-title h2 {
   margin: 0;
   color: #34465c;
-  font-size: 15px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.2px;
 }
 
 .files-title > span {
   color: #92a0af;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .filter-tabs {
@@ -644,7 +644,7 @@ input:focus-visible,
   background: transparent;
   color: #728196;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 550;
   white-space: nowrap;
 }
@@ -662,7 +662,7 @@ input:focus-visible,
 
 .filter-tab > span {
   color: #99a5b4;
-  font-size: 9px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -692,7 +692,7 @@ input:focus-visible,
   padding: 0 15px;
   border-bottom: 1px solid var(--line);
   color: #8c98a8;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.65px;
   white-space: nowrap;
@@ -707,7 +707,7 @@ input:focus-visible,
   padding: 8px 15px;
   border-bottom: 1px solid #edf0f4;
   color: #627187;
-  font-size: 10px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
@@ -772,14 +772,14 @@ input:focus-visible,
   max-width: min(36vw, 400px);
   overflow: hidden;
   color: #3a4d64;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 650;
   text-overflow: ellipsis;
 }
 
 .file-name-text small {
   color: #8794a5;
-  font-size: 9px;
+  font-size: 13px;
 }
 
 .file-type-label {
@@ -790,7 +790,7 @@ input:focus-visible,
   border-radius: 4px;
   background: #f1f4f8;
   color: #6d7d91;
-  font-size: 9px;
+  font-size: 13px;
 }
 
 .file-muted {
@@ -839,7 +839,7 @@ input:focus-visible,
   flex-direction: row;
   gap: 10px;
   color: #738197;
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .files-empty {
@@ -861,14 +861,14 @@ input:focus-visible,
 .files-empty h3 {
   margin: 13px 0 0;
   color: #40536a;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 650;
 }
 
 .files-empty p {
   margin: 6px 0 0;
   color: #8794a5;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .empty-action {
@@ -882,7 +882,7 @@ input:focus-visible,
   background: var(--blue-tint);
   color: var(--blue);
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 650;
 }
 
@@ -899,7 +899,7 @@ input:focus-visible,
   padding: 12px 1px;
   border-top: 1px solid var(--line);
   color: #99a4b1;
-  font-size: 9px;
+  font-size: 13px;
 }
 
 .spin {
@@ -942,7 +942,7 @@ input:focus-visible,
   }
 
   .overview-detail {
-    font-size: 8px;
+    font-size: 12px;
   }
 }
 
@@ -956,7 +956,7 @@ input:focus-visible,
   }
 
   .overview-detail {
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .filter-tabs {
@@ -1009,11 +1009,11 @@ input:focus-visible,
   }
 
   .brand-name {
-    font-size: 17px;
+    font-size: 21px;
   }
 
   .brand-name small {
-    font-size: 7px;
+    font-size: 11px;
   }
 
   .sidebar-section {
@@ -1042,7 +1042,7 @@ input:focus-visible,
   }
 
   .sidebar-nav-item > span:nth-of-type(1) {
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .sidebar-count {
@@ -1064,7 +1064,7 @@ input:focus-visible,
   }
 
   .page-heading h1 {
-    font-size: 25px;
+    font-size: 29px;
   }
 
   .overview-card {
@@ -1103,7 +1103,7 @@ input:focus-visible,
   }
 
   .sidebar-nav-item > span:nth-of-type(1) {
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .manager-topbar {
@@ -1113,11 +1113,11 @@ input:focus-visible,
 
   .topbar-label {
     gap: 6px;
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .topbar-overline {
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .manager-search {
@@ -1126,7 +1126,7 @@ input:focus-visible,
   }
 
   .manager-search input {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .manager-content {
@@ -1139,12 +1139,12 @@ input:focus-visible,
   }
 
   .page-heading h1 {
-    font-size: 23px;
+    font-size: 27px;
   }
 
   .page-description {
     max-width: 225px;
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.5;
   }
 
@@ -1152,7 +1152,7 @@ input:focus-visible,
     min-height: 34px;
     gap: 6px;
     padding: 0 8px;
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .primary-action svg {
@@ -1179,12 +1179,12 @@ input:focus-visible,
   }
 
   .overview-label {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 0.45px;
   }
 
   .overview-copy strong {
-    font-size: 16px;
+    font-size: 20px;
   }
 
   .overview-detail {
@@ -1203,12 +1203,12 @@ input:focus-visible,
   }
 
   .upload-panel-copy strong {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .upload-panel-copy > span {
     max-width: 180px;
-    font-size: 9px;
+    font-size: 13px;
     line-height: 1.4;
   }
 
@@ -1234,7 +1234,7 @@ input:focus-visible,
     min-height: 31px;
     gap: 5px;
     padding: 0 8px;
-    font-size: 9px;
+    font-size: 13px;
   }
 
   .files-section {
@@ -1244,11 +1244,11 @@ input:focus-visible,
   .filter-tab {
     min-height: 27px;
     padding: 0 6px;
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .filter-tab > span {
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .files-table {
@@ -1257,7 +1257,7 @@ input:focus-visible,
 
   .manager-footer {
     flex-wrap: wrap;
-    font-size: 8px;
+    font-size: 12px;
   }
 }
 

@@ -336,40 +336,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="overview-grid" aria-label="File totals">
-            <article className="overview-card overview-card-total">
-              <span className="overview-icon"><Files size={18} /></span>
-              <span className="overview-copy">
-                <span className="overview-label">ALL FILES</span>
-                <strong>{counts.all}</strong>
-              </span>
-              <span className="overview-detail">in your library</span>
-            </article>
-            <article className="overview-card">
-              <span className="overview-icon overview-icon-doc"><FileText size={18} /></span>
-              <span className="overview-copy">
-                <span className="overview-label">DOCUMENTS</span>
-                <strong>{counts.documents}</strong>
-              </span>
-              <span className="overview-detail">notes &amp; files</span>
-            </article>
-            <article className="overview-card">
-              <span className="overview-icon overview-icon-image"><ImageIcon size={18} /></span>
-              <span className="overview-copy">
-                <span className="overview-label">IMAGES</span>
-                <strong>{counts.images}</strong>
-              </span>
-              <span className="overview-detail">visual references</span>
-            </article>
-            <article className="overview-card">
-              <span className="overview-icon overview-icon-archive"><Archive size={18} /></span>
-              <span className="overview-copy">
-                <span className="overview-label">ARCHIVES</span>
-                <strong>{counts.archives}</strong>
-              </span>
-              <span className="overview-detail">compressed files</span>
-            </article>
-          </section>
+
 
           <section
             {...getRootProps()}
@@ -414,20 +381,7 @@ export default function Home() {
                   {filteredNotes.length === 1 ? "item" : "items"}
                 </span>
               </div>
-              <div className="filter-tabs" aria-label="Filter files">
-                {filters.map((filter) => (
-                  <button
-                    key={filter.id}
-                    className={`filter-tab${activeFilter === filter.id ? " filter-tab-active" : ""}`}
-                    type="button"
-                    onClick={() => setActiveFilter(filter.id)}
-                    aria-pressed={activeFilter === filter.id}
-                  >
-                    {filter.label}
-                    <span>{counts[filter.id]}</span>
-                  </button>
-                ))}
-              </div>
+
             </div>
 
             {isLoading ? (
