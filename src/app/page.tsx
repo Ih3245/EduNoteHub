@@ -1,8 +1,22 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
-import { Folder, File, Image as ImageIcon, FileArchive, UploadCloud, X, Search, BookOpen, Loader2 } from "lucide-react";
+import JSZip from "jszip";
+import {
+  Archive,
+  ArrowDownToLine,
+  FileImage,
+  FileText,
+  Files,
+  Folder,
+  FolderOpen,
+  HardDriveUpload,
+  Image as ImageIcon,
+  Loader2,
+  Search,
+  X,
+} from "lucide-react";
 
 type NoteItem = {
   id: string;
@@ -11,183 +25,541 @@ type NoteItem = {
   file_size: string;
   created_at: string;
   telegram_file_id: string;
-  color?: string;
 };
 
-const colors = ["bg-blue-200", "bg-pink-200", "bg-yellow-200", "bg-green-200"];
+type FileWithPath = File & { path?: string; webkitRelativePath?: string };
+type FileFilter = "all" | "documents" | "images" | "archives";
+
+const filters: { id: FileFilter; label: string }[] = [
+  { id: "all", label: "All files" },
+  { id: "documents", label: "Documents" },
+  { id: "images", label: "Images" },
+  { id: "archives", label: "Archives" },
+];
 
 export default function Home() {
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [search, setSearch] = useState("");
+  const [activeFilter, setActiveFilter] = useState<FileFilter>("all");
   const [isLoading, setIsLoading] = useState(true);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetchNotes();
+    folderInputRef.current?.setAttribute("webkitdirectory", "");
+    folderInputRef.current?.setAttribute("directory", "");
   }, []);
 
-  const fetchNotes = async () => {
-    try {
-      const res = await fetch("/api/notes");
-      const data = await res.json();
-      if (data.success) {
-        // Assign random colors for UI
-        const coloredNotes = data.notes.map((n: NoteItem) => ({
-          ...n,
-          color: colors[Math.floor(Math.random() * colors.length)]
-        }));
-        setNotes(coloredNotes);
-      }
-    } catch (error) {
-      console.error("Failed to fetch notes");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    let isMounted = true;
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    for (const file of acceptedFiles) {
-      // Add a temporary loading state item
+    fetch("/api/notes")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success) {
+          setNotes(data.notes);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch notes", error);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const uploadFile = useCallback(async (
+    file: File,
+    pendingLabel = "Uploading...",
+    prepareFile?: () => Promise<File>,
+  ) => {
       const tempId = Math.random().toString();
       const newFile: NoteItem = {
         id: tempId,
         file_name: file.name,
-        file_type: (file.type.includes("image") ? "image" : file.name.endsWith(".zip") ? "zip" : "file"),
-        file_size: "Uploading...",
+        file_type: file.type.includes("image")
+          ? "image"
+          : /\.(zip|rar|7z)$/i.test(file.name)
+            ? "zip"
+            : "file",
+        file_size: pendingLabel,
         created_at: new Date().toISOString(),
         telegram_file_id: "temp",
-        color: "bg-gray-200"
       };
-      
+
       setNotes((prev) => [newFile, ...prev]);
 
       const formData = new FormData();
-      formData.append("file", file);
 
       try {
+        const fileToUpload = prepareFile ? await prepareFile() : file;
+        setNotes((prev) =>
+          prev.map((note) =>
+            note.id === tempId ? { ...note, file_size: "Uploading..." } : note,
+          ),
+        );
+        formData.append("file", fileToUpload);
+
         const res = await fetch("/api/upload", {
           method: "POST",
-          body: formData
+          body: formData,
         });
         const data = await res.json();
-        
+
         if (data.success) {
-          // Replace temp item with real item
-          const realNote = { ...data.note, color: colors[Math.floor(Math.random() * colors.length)] };
-          setNotes((prev) => prev.map(n => n.id === tempId ? realNote : n));
+          setNotes((prev) =>
+            prev.map((note) => (note.id === tempId ? data.note : note)),
+          );
         } else {
           alert(`Failed: ${data.error}`);
-          setNotes((prev) => prev.filter(n => n.id !== tempId));
+          setNotes((prev) => prev.filter((note) => note.id !== tempId));
         }
-      } catch (err) {
-        alert(`Error uploading ${file.name}`);
-        setNotes((prev) => prev.filter(n => n.id !== tempId));
+      } catch (error) {
+        console.error(`Error uploading ${file.name}`, error);
+        alert(`Could not prepare or upload ${file.name}`);
+        setNotes((prev) => prev.filter((note) => note.id !== tempId));
       }
-    }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const uploadFiles = useCallback(async (acceptedFiles: File[]) => {
+    const folders = new Map<string, { file: File; path: string }[]>();
 
-  const getIcon = (type: string) => {
+    for (const file of acceptedFiles) {
+      const fileWithPath = file as FileWithPath;
+      const rawPath =
+        fileWithPath.webkitRelativePath || fileWithPath.path || "";
+      const normalizedPath = rawPath
+        .replace(/\\/g, "/")
+        .replace(/^\.?\//, "")
+        .replace(/^\/+/, "");
+      const pathParts = normalizedPath.split("/").filter(Boolean);
+
+      if (pathParts.length < 2) {
+        await uploadFile(file);
+        continue;
+      }
+
+      const folderName = pathParts[0];
+      const folderFiles = folders.get(folderName) ?? [];
+      folderFiles.push({ file, path: pathParts.slice(1).join("/") });
+      folders.set(folderName, folderFiles);
+    }
+
+    for (const [folderName, folderFiles] of folders) {
+      await uploadFile(
+        new File([], `${folderName}.zip`, { type: "application/zip" }),
+        "Compressing folder...",
+        async () => {
+          const zip = new JSZip();
+          for (const { file, path } of folderFiles) {
+            zip.file(`${folderName}/${path}`, file);
+          }
+
+          const archive = await zip.generateAsync({
+            type: "blob",
+            compression: "DEFLATE",
+            compressionOptions: { level: 6 },
+          });
+          return new File([archive], `${folderName}.zip`, {
+            type: "application/zip",
+          });
+        },
+      );
+    }
+  }, [uploadFile]);
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => uploadFiles(acceptedFiles),
+    [uploadFiles],
+  );
+
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+    onDrop,
+    noClick: true,
+  });
+
+  const getIcon = (type: NoteItem["file_type"]) => {
     switch (type) {
-      case "folder": return <Folder size={32} className="text-gray-800" />;
-      case "image": return <ImageIcon size={32} className="text-gray-800" />;
-      case "zip": return <FileArchive size={32} className="text-gray-800" />;
-      default: return <File size={32} className="text-gray-800" />;
+      case "folder":
+        return <Folder size={19} strokeWidth={1.8} />;
+      case "image":
+        return <ImageIcon size={19} strokeWidth={1.8} />;
+      case "zip":
+        return <Archive size={19} strokeWidth={1.8} />;
+      default:
+        return <FileText size={19} strokeWidth={1.8} />;
     }
   };
 
-  const filteredNotes = notes.filter(f => f.file_name.toLowerCase().includes(search.toLowerCase()));
+  const getTypeLabel = (type: NoteItem["file_type"]) => {
+    switch (type) {
+      case "folder":
+        return "Folder";
+      case "image":
+        return "Image";
+      case "zip":
+        return "Archive";
+      default:
+        return "Document";
+    }
+  };
+
+  const counts = {
+    all: notes.length,
+    documents: notes.filter(
+      (note) => note.file_type === "file" || note.file_type === "folder",
+    ).length,
+    images: notes.filter((note) => note.file_type === "image").length,
+    archives: notes.filter((note) => note.file_type === "zip").length,
+  };
+
+  const filteredNotes = notes.filter((note) => {
+    const matchesSearch = note.file_name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesFilter =
+      activeFilter === "all" ||
+      (activeFilter === "documents" &&
+        (note.file_type === "file" || note.file_type === "folder")) ||
+      (activeFilter === "images" && note.file_type === "image") ||
+      (activeFilter === "archives" && note.file_type === "zip");
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
-    <div className="min-h-screen p-6 md:p-12 max-w-6xl mx-auto">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 neo-box bg-yellow-300 flex items-center justify-center">
-            <BookOpen size={24} className="text-gray-900" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">EduNote Hub</h1>
-            <p className="text-gray-700 font-medium text-sm">Your Personal Academic Archive</p>
-          </div>
-        </div>
-        
-        <div className="relative w-full md:w-72">
-          <Search size={20} className="absolute left-3 top-3 text-gray-500" />
-          <input 
-            type="text" 
-            placeholder="Search notes..." 
-            className="w-full neo-box py-2 pl-10 pr-4 outline-none font-medium text-gray-800 focus:ring-2 focus:ring-blue-400"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </header>
+    <div className="file-manager">
+      <aside className="manager-sidebar" aria-label="File manager navigation">
+        <a className="manager-brand" href="#top" aria-label="EduNote home">
+          <span className="brand-icon">
+            <Files size={21} strokeWidth={2} />
+          </span>
+          <span className="brand-name">
+            Edu<span>Note</span>
+            <small>ACADEMIC FILES</small>
+          </span>
+        </a>
 
-      <main className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        
-        {/* Upload Section */}
-        <div className="lg:col-span-1">
-          <div 
-            {...getRootProps()} 
-            className={`neo-box p-8 border-dashed border-4 flex flex-col items-center justify-center text-center cursor-pointer min-h-[300px] transition-colors ${isDragActive ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-300 hover:bg-gray-50'}`}
+        <div className="sidebar-section">
+          <p className="sidebar-heading">WORKSPACE</p>
+          <nav className="sidebar-nav">
+            {filters.map((filter) => (
+              <button
+                className={`sidebar-nav-item${activeFilter === filter.id ? " is-active" : ""}`}
+                key={filter.id}
+                type="button"
+                onClick={() => setActiveFilter(filter.id)}
+                aria-current={activeFilter === filter.id ? "page" : undefined}
+              >
+                {filter.id === "all" && <Files size={18} />}
+                {filter.id === "documents" && <FileText size={18} />}
+                {filter.id === "images" && <FileImage size={18} />}
+                {filter.id === "archives" && <Archive size={18} />}
+                <span>{filter.label}</span>
+                <span className="sidebar-count">{counts[filter.id]}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        <div className="sidebar-upload">
+          <div className="sidebar-upload-icon">
+            <HardDriveUpload size={19} />
+          </div>
+          <p>Keep your study materials together.</p>
+          <a href="#upload">Upload a file</a>
+        </div>
+
+        <div className="sidebar-footer">
+          <span className="connection-dot" />
+          Your personal study space
+        </div>
+      </aside>
+
+      <main className="manager-main" id="top">
+        <header className="manager-topbar">
+          <div className="topbar-label">
+            <span className="topbar-overline">EDUNOTE</span>
+            <span className="topbar-separator">/</span>
+            <span>My workspace</span>
+          </div>
+          <label className="manager-search">
+            <Search size={17} aria-hidden="true" />
+            <span className="sr-only">Search files</span>
+            <input
+              type="search"
+              placeholder="Search files..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            {search && (
+              <button
+                className="search-reset"
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
+          </label>
+        </header>
+
+        <div className="manager-content">
+          <section className="page-heading">
+            <div>
+              <p className="page-eyebrow">PERSONAL ACADEMIC ARCHIVE</p>
+              <h1>My library</h1>
+              <p className="page-description">
+                Manage your notes, documents, and study materials.
+              </p>
+            </div>
+            <a className="primary-action" href="#upload">
+              <HardDriveUpload size={17} />
+              Upload files
+            </a>
+          </section>
+
+          <section className="overview-grid" aria-label="File totals">
+            <article className="overview-card overview-card-total">
+              <span className="overview-icon"><Files size={18} /></span>
+              <span className="overview-copy">
+                <span className="overview-label">ALL FILES</span>
+                <strong>{counts.all}</strong>
+              </span>
+              <span className="overview-detail">in your library</span>
+            </article>
+            <article className="overview-card">
+              <span className="overview-icon overview-icon-doc"><FileText size={18} /></span>
+              <span className="overview-copy">
+                <span className="overview-label">DOCUMENTS</span>
+                <strong>{counts.documents}</strong>
+              </span>
+              <span className="overview-detail">notes &amp; files</span>
+            </article>
+            <article className="overview-card">
+              <span className="overview-icon overview-icon-image"><ImageIcon size={18} /></span>
+              <span className="overview-copy">
+                <span className="overview-label">IMAGES</span>
+                <strong>{counts.images}</strong>
+              </span>
+              <span className="overview-detail">visual references</span>
+            </article>
+            <article className="overview-card">
+              <span className="overview-icon overview-icon-archive"><Archive size={18} /></span>
+              <span className="overview-copy">
+                <span className="overview-label">ARCHIVES</span>
+                <strong>{counts.archives}</strong>
+              </span>
+              <span className="overview-detail">compressed files</span>
+            </article>
+          </section>
+
+          <section
+            {...getRootProps()}
+            className={`upload-panel${isDragActive ? " upload-panel-active" : ""}`}
+            id="upload"
+            aria-label="Upload notes and files"
           >
             <input {...getInputProps()} />
-            <div className="w-16 h-16 bg-pink-200 rounded-full border-2 border-gray-900 flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_#1a1a1a]">
-              <UploadCloud size={32} className="text-gray-900" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Upload Files</h3>
-            <p className="text-gray-600 font-medium text-sm">Drag & drop your notes, images, or zip folders here.</p>
-            <p className="mt-6 text-xs font-bold text-gray-500 uppercase tracking-widest">NO PASSWORD NEEDED</p>
-          </div>
-        </div>
+            <input
+              ref={folderInputRef}
+              className="sr-only"
+              type="file"
+              multiple
+              onChange={(event) => {
+                const files = Array.from(event.currentTarget.files ?? []);
+                void uploadFiles(files);
+                event.currentTarget.value = "";
+              }}
+              aria-label="Choose a folder to upload"
+            />
+            <span className="upload-panel-icon">
+              <HardDriveUpload size={21} strokeWidth={1.8} />
+            </span>
+            <span className="upload-panel-copy">
+              <strong>{isDragActive ? "Drop files to upload" : "Upload study materials"}</strong>
+              <span>Folder contents are bundled into one ZIP archive</span>
+            </span>
+            <span className="upload-supported">
+              <span>SUPPORTED</span>
+              <strong>Documents, images, files &amp; ZIP archives</strong>
+            </span>
+            <span className="upload-actions">
+              <button
+                className="upload-choice upload-choice-primary"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  open();
+                }}
+              >
+                <HardDriveUpload size={15} />
+                Choose files
+              </button>
+              <button
+                className="upload-choice"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  folderInputRef.current?.click();
+                }}
+              >
+                <FolderOpen size={15} />
+                Choose folder
+              </button>
+            </span>
+          </section>
 
-        {/* Files Grid */}
-        <div className="lg:col-span-2">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-black text-gray-900">Recent Notes</h2>
-            <div className="flex gap-2">
-              <button className="neo-button bg-white text-sm">All</button>
+          <section className="files-section" aria-labelledby="files-heading">
+            <div className="files-toolbar">
+              <div className="files-title">
+                <h2 id="files-heading">
+                  {filters.find((filter) => filter.id === activeFilter)?.label}
+                </h2>
+                <span>
+                  {filteredNotes.length}{" "}
+                  {filteredNotes.length === 1 ? "item" : "items"}
+                </span>
+              </div>
+              <div className="filter-tabs" aria-label="Filter files">
+                {filters.map((filter) => (
+                  <button
+                    key={filter.id}
+                    className={`filter-tab${activeFilter === filter.id ? " filter-tab-active" : ""}`}
+                    type="button"
+                    onClick={() => setActiveFilter(filter.id)}
+                    aria-pressed={activeFilter === filter.id}
+                  >
+                    {filter.label}
+                    <span>{counts[filter.id]}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          {isLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="animate-spin text-gray-500" size={32} />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {filteredNotes.map((note) => (
-                <div key={note.id} className="neo-box p-5 flex items-start gap-4 relative group">
-                  <div className={`w-14 h-14 ${note.color} rounded-xl border-2 border-gray-900 flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#1a1a1a]`}>
-                    {note.file_size === "Uploading..." ? <Loader2 className="animate-spin" size={24} /> : getIcon(note.file_type)}
-                  </div>
-                  <div className="flex-1 min-w-0 pr-12">
-                    <h4 className="font-bold text-gray-900 truncate text-lg" title={note.file_name}>{note.file_name}</h4>
-                    <div className="flex items-center gap-2 mt-1 text-sm font-semibold text-gray-600">
-                      <span>{note.file_size}</span>
-                    </div>
-                  </div>
-                  {note.file_size !== "Uploading..." && (
-                    <a 
-                      href={`/api/download?id=${note.telegram_file_id}&name=${encodeURIComponent(note.file_name)}`}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-gray-900 hover:bg-blue-300 flex items-center justify-center transition-colors bg-white shadow-[2px_2px_0px_0px_#1a1a1a]"
-                      title="Download File"
-                      download
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    </a>
-                  )}
-                </div>
-              ))}
-              
-              {filteredNotes.length === 0 && (
-                <div className="col-span-full py-12 text-center text-gray-500 font-bold">
-                  No notes found. Upload some!
-                </div>
-              )}
-            </div>
-          )}
+
+            {isLoading ? (
+              <div className="files-loading" role="status">
+                <Loader2 className="spin" size={22} />
+                <span>Loading your files...</span>
+              </div>
+            ) : filteredNotes.length > 0 ? (
+              <div className="files-table-wrap">
+                <table className="files-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">NAME</th>
+                      <th scope="col">TYPE</th>
+                      <th scope="col">FILE SIZE</th>
+                      <th scope="col">DATE ADDED</th>
+                      <th scope="col"><span className="sr-only">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredNotes.map((note) => (
+                      <tr key={note.id}>
+                        <td>
+                          <div className="file-name-cell">
+                            <span className={`file-type-icon file-type-${note.file_type}`}>
+                              {note.file_size === "Uploading..." ||
+                              note.file_size === "Compressing folder..." ? (
+                                <Loader2 className="spin" size={18} />
+                              ) : (
+                                getIcon(note.file_type)
+                              )}
+                            </span>
+                            <span className="file-name-text" title={note.file_name}>
+                              <strong>{note.file_name}</strong>
+                              {(note.file_size === "Uploading..." ||
+                                note.file_size === "Compressing folder...") && (
+                                <small>{note.file_size}</small>
+                              )}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="file-type-label">
+                            {getTypeLabel(note.file_type)}
+                          </span>
+                        </td>
+                        <td className="file-muted">
+                          {note.file_size === "Uploading..." ||
+                          note.file_size === "Compressing folder..."
+                            ? "—"
+                            : note.file_size}
+                        </td>
+                        <td className="file-muted">
+                          {new Date(note.created_at).toLocaleDateString("en", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </td>
+                        <td className="file-action-cell">
+                          {note.file_size !== "Uploading..." &&
+                            note.file_size !== "Compressing folder..." && (
+                            <a
+                              className="download-action"
+                              href={`/api/download?id=${note.telegram_file_id}&name=${encodeURIComponent(note.file_name)}`}
+                              title={`Download ${note.file_name}`}
+                              aria-label={`Download ${note.file_name}`}
+                              download
+                            >
+                              <ArrowDownToLine size={17} />
+                            </a>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="files-empty">
+                <span className="empty-icon">
+                  {search ? <Search size={22} /> : <Files size={22} />}
+                </span>
+                <h3>
+                  {search
+                    ? "No files found"
+                    : activeFilter === "all"
+                      ? "Your library is empty"
+                      : `No ${filters.find((filter) => filter.id === activeFilter)?.label.toLowerCase()} yet`}
+                </h3>
+                <p>
+                  {search
+                    ? "Try a different search or clear the current filters."
+                    : activeFilter === "all"
+                      ? "Upload your first study material to get started."
+                      : `There are no ${filters.find((filter) => filter.id === activeFilter)?.label.toLowerCase()} in your library yet.`}
+                </p>
+                {search ? (
+                  <button
+                    className="empty-action"
+                    type="button"
+                    onClick={() => {
+                      setSearch("");
+                      setActiveFilter("all");
+                    }}
+                  >
+                    Clear filters
+                  </button>
+                ) : (
+                  <a className="empty-action" href="#upload">Upload a file</a>
+                )}
+              </div>
+            )}
+          </section>
+
+          <footer className="manager-footer">
+            <span>EduNote · Personal academic archive</span>
+            <span>Organized for learning</span>
+          </footer>
         </div>
       </main>
     </div>

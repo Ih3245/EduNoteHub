@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EduNote Hub | Academic Notes",
-  description: "A free online host for your educational notes, photos, zips, and folders.",
+  title: "EduNote | Academic File Manager",
+  description: "Organize and access your notes, documents, images, and study files.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
