@@ -15,10 +15,13 @@ export default function SettingsPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [storageUsed, setStorageUsed] = useState<string>("Calculating...");
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSessions();
     fetchStorage();
+    // Get current session ID from server
+    fetch("/api/me").then(r => r.json()).then(d => setCurrentSessionId(d.sessionId)).catch(() => {});
   }, []);
 
   const fetchSessions = async () => {
@@ -144,16 +147,24 @@ export default function SettingsPage() {
             <div className="divide-y" style={{ borderColor: "var(--line)" }}>
               {sessions.map((session) => {
                 const device = parseDevice(session.device_info);
+                const isCurrent = session.id === currentSessionId;
                 return (
-                  <div key={session.id} className="p-8 flex items-center justify-between gap-6">
+                  <div key={session.id} className="p-8 flex items-center justify-between gap-6" style={isCurrent ? { background: "#f0fdf4" } : {}}>
                     <div className="flex items-start gap-5 min-w-0">
-                      <div className="p-4 rounded-xl mt-1" style={{ background: "var(--surface-muted)", color: "var(--text-soft)" }}>
+                      <div className="p-4 rounded-xl mt-1" style={{ background: isCurrent ? "#dcfce7" : "var(--surface-muted)", color: isCurrent ? "#16a34a" : "var(--text-soft)" }}>
                         {device.icon}
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-bold text-lg truncate" style={{ color: "var(--text)" }}>
-                          {device.text}
-                        </h3>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <h3 className="font-bold text-lg truncate" style={{ color: "var(--text)" }}>
+                            {device.text}
+                          </h3>
+                          {isCurrent && (
+                            <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ background: "#dcfce7", color: "#16a34a" }}>
+                              This device
+                            </span>
+                          )}
+                        </div>
                         <div className="flex items-center gap-4 mt-2 text-sm font-medium" style={{ color: "var(--text-muted)" }}>
                           <span className="flex items-center gap-2"><Globe size={16} /> {session.ip_address}</span>
                           <span>•</span>
