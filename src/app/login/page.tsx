@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Lock, Loader2, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import "../globals.css";
 
 export default function LoginPage() {
   const [pin, setPin] = useState("");
@@ -27,8 +28,7 @@ export default function LoginPage() {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        router.push("/");
-        router.refresh(); // Force reload to get protected page
+        window.location.href = "/";
       } else {
         setError(data.error || "Incorrect PIN");
         setPin("");
@@ -41,17 +41,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#f4f0ea]">
-      <div className="neo-box w-full max-w-md p-8 bg-white text-center">
-        <div className="w-16 h-16 bg-yellow-300 rounded-full border-2 border-gray-900 flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_0px_#1a1a1a]">
-          <Lock size={32} className="text-gray-900" />
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--page)" }}>
+      <div 
+        className="w-full max-w-[400px] p-8 text-center" 
+        style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}
+      >
+        <div 
+          className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6"
+          style={{ background: "var(--blue-light)", color: "var(--blue)" }}
+        >
+          <Lock size={28} />
         </div>
         
-        <h1 className="text-2xl font-black text-gray-900 mb-2">Secure Access</h1>
-        <p className="text-gray-600 font-medium mb-8">Enter your security PIN to access the archive.</p>
+        <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--text)", letterSpacing: "-0.5px" }}>Secure Access</h1>
+        <p className="text-sm mb-8" style={{ color: "var(--text-soft)" }}>Enter your security PIN to access EduNote Hub.</p>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-100 border-2 border-red-900 text-red-900 font-bold flex items-center gap-2 text-left text-sm">
+          <div className="mb-6 p-3 rounded-lg text-sm font-medium flex items-center gap-2 text-left" style={{ background: "#fef2f2", color: "#b91c1c", border: "1px solid #fecaca" }}>
             <AlertCircle size={18} className="shrink-0" />
             <span>{error}</span>
           </div>
@@ -62,8 +68,9 @@ export default function LoginPage() {
             type="password"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
-            placeholder="Enter PIN..."
-            className="w-full neo-box p-4 text-center text-xl font-bold tracking-[0.5em] outline-none focus:ring-4 focus:ring-blue-300"
+            placeholder="• • • • •"
+            className="w-full p-4 text-center text-xl font-bold tracking-[0.5em] outline-none rounded-lg transition-colors"
+            style={{ border: "1px solid var(--line)", color: "var(--text)", background: "var(--surface-muted)" }}
             disabled={isLoading || error.includes("10 minutes")}
             autoFocus
           />
@@ -71,9 +78,10 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading || !pin || error.includes("10 minutes")}
-            className="w-full neo-button bg-blue-400 text-white py-4 text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            style={{ background: "var(--blue)", color: "#fff" }}
           >
-            {isLoading ? <Loader2 className="animate-spin" size={24} /> : "Unlock Archive"}
+            {isLoading ? <Loader2 className="animate-spin" size={20} /> : "Unlock Archive"}
           </button>
         </form>
       </div>

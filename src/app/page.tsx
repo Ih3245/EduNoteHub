@@ -288,26 +288,42 @@ export default function Home() {
             <span className="topbar-separator">/</span>
             <span>My workspace</span>
           </div>
-          <label className="manager-search">
-            <Search size={17} aria-hidden="true" />
-            <span className="sr-only">Search files</span>
-            <input
-              type="search"
-              placeholder="Search files..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-            {search && (
-              <button
-                className="search-reset"
-                type="button"
-                onClick={() => setSearch("")}
-                aria-label="Clear search"
-              >
-                <X size={15} />
-              </button>
-            )}
-          </label>
+          <div className="flex items-center gap-3">
+            <label className="manager-search">
+              <Search size={17} aria-hidden="true" />
+              <span className="sr-only">Search files</span>
+              <input
+                type="search"
+                placeholder="Search files..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+              {search && (
+                <button
+                  className="search-reset"
+                  type="button"
+                  onClick={() => setSearch("")}
+                  aria-label="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </label>
+            <a href="/security" className="text-gray-400 hover:text-blue-500 transition-colors" title="Security & Devices" style={{ padding: '6px' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+            </a>
+            <button 
+              onClick={() => {
+                document.cookie = 'edunote_auth=; Max-Age=0; path=/;';
+                window.location.reload();
+              }}
+              className="text-gray-400 hover:text-red-500 transition-colors" 
+              title="Logout"
+              style={{ padding: '6px' }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+          </div>
         </header>
 
         <div className="manager-content">

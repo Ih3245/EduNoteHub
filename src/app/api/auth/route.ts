@@ -1,38 +1,44 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 const CORRECT_PIN = '01407286010';
-const BLOCK_TIME_MS = 10 * 60 * 1000; // 10 minutes
+const BLOCK_TIME_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 3;
 
-// In-memory store for rate limiting (works per-instance on Vercel)
 const attemptsMap = new Map<string, { count: number, blockedUntil: number }>();
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 export async function POST(request: NextRequest) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
+    const userAgent = request.headers.get('user-agent') || 'Unknown Device';
     const body = await request.json();
     const pin = body.pin;
 
     const now = Date.now();
     const record = attemptsMap.get(ip) || { count: 0, blockedUntil: 0 };
 
-    // Check if blocked
     if (record.blockedUntil > now) {
       const remainingMinutes = Math.ceil((record.blockedUntil - now) / 60000);
-      return NextResponse.json(
-        { error: `Too many wrong attempts. Blocked for ${remainingMinutes} minutes.` },
-        { status: 429 }
-      );
+      return NextResponse.json({ error: `Too many wrong attempts. Blocked for ${remainingMinutes} minutes.` }, { status: 429 });
     }
 
-    // Verify PIN
     if (pin === CORRECT_PIN) {
-      // Reset attempts on success
       attemptsMap.delete(ip);
       
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
+      const { data, error } = await supabase.from('sessions').insert([{ ip_address: ip, device_info: userAgent }]).select();
+
+      if (error || !data) {
+        return NextResponse.json({ error: 'Failed to create session' }, { status: 500 });
+      }
+
+      const sessionId = data[0].id;
+      
       const response = NextResponse.json({ success: true });
-      response.cookies.set('edunote_auth', 'authenticated_secure_session', {
+      response.cookies.set('edunote_auth', sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -42,13 +48,11 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    // Wrong PIN
     record.count += 1;
     if (record.count >= MAX_ATTEMPTS) {
       record.blockedUntil = now + BLOCK_TIME_MS;
-      record.count = 0; // Reset count for the next cycle after block
+      record.count = 0;
     }
-    
     attemptsMap.set(ip, record);
     
     const remaining = MAX_ATTEMPTS - record.count;
