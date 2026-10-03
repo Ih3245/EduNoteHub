@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Settings, Shield, Trash2, ArrowLeft, Laptop, Smartphone, Globe, Loader2, HardDrive } from "lucide-react";
+import { Settings, Shield, Trash2, ArrowLeft, Laptop, Smartphone, Globe, Loader2, HardDrive, LogOut } from "lucide-react";
 import "../globals.css";
 
 type Session = {
@@ -179,6 +179,28 @@ export default function SettingsPage() {
             </div>
           )}
         </div>
+
+        {/* Logout */}
+        <div className="mt-8 rounded-xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
+          <div className="px-8 py-5 border-b" style={{ borderColor: "var(--line)", background: "var(--surface-muted)" }}>
+            <h2 className="font-semibold text-lg flex items-center gap-3" style={{ color: "var(--text)" }}>
+              <LogOut size={20} style={{ color: "#ef4444" }} />
+              Logout
+            </h2>
+          </div>
+          <div className="p-8">
+            <p className="text-base mb-6" style={{ color: "var(--text-soft)" }}>Log out from this device. You will be redirected to the login page.</p>
+            <button
+              onClick={() => { document.cookie = "edunote_auth=; Max-Age=0; path=/;"; window.location.href = "/login"; }}
+              className="px-6 py-3 rounded-xl text-base font-bold flex items-center gap-3 transition-colors"
+              style={{ border: "1px solid #fecaca", color: "#b91c1c", background: "#fff5f5" }}
+            >
+              <LogOut size={20} />
+              Log out of this device
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

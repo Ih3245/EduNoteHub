@@ -15,7 +15,6 @@ import {
   Loader2,
   Search,
   Settings,
-  LogOut,
   X,
   CloudUpload,
 } from "lucide-react";
@@ -198,15 +197,6 @@ export default function Home() {
         <a href="/settings" style={{ color: "var(--text-soft)", padding: 8, display: "flex" }} title="Settings">
           <Settings size={20} />
         </a>
-
-        {/* Logout */}
-        <button
-          onClick={() => { document.cookie = "edunote_auth=; Max-Age=0; path=/;"; window.location.reload(); }}
-          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-soft)", padding: 8, display: "flex" }}
-          title="Logout"
-        >
-          <LogOut size={20} />
-        </button>
       </header>
 
       <main style={{ maxWidth: 720, margin: "0 auto", padding: "20px 16px 80px" }}>

@@ -35,13 +35,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: tgResult.description }, { status: 500 });
     }
 
-    // Extract file info from Telegram
+    // Extract file info from Telegram — always use original file.name as source of truth
     const document = tgResult.result.document;
     const fileId = document.file_id;
-    const fileName = document.file_name || file.name;
+    const fileName = file.name; // Telegram's file_name is unreliable for images
     let fileType = 'file';
-    if (fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i)) fileType = 'image';
-    else if (fileName.match(/\.(zip|rar|7z)$/i)) fileType = 'zip';
+    if (file.type.startsWith('image/') || fileName.match(/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i)) fileType = 'image';
+    else if (fileName.match(/\.(zip|rar|7z|tar|gz)$/i)) fileType = 'zip';
 
     const sizeInMb = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
 
