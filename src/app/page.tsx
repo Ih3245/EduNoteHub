@@ -178,9 +178,8 @@ export default function Home() {
     [uploadFiles],
   );
 
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    noClick: true,
   });
 
   const getIcon = (type: NoteItem["file_type"]) => {
@@ -335,10 +334,6 @@ export default function Home() {
                 Manage your notes, documents, and study materials.
               </p>
             </div>
-            <a className="primary-action" href="#upload">
-              <HardDriveUpload size={17} />
-              Upload files
-            </a>
           </section>
 
           <section className="overview-grid" aria-label="File totals">
@@ -405,30 +400,6 @@ export default function Home() {
             <span className="upload-supported">
               <span>SUPPORTED</span>
               <strong>Documents, images, files &amp; ZIP archives</strong>
-            </span>
-            <span className="upload-actions">
-              <button
-                className="upload-choice upload-choice-primary"
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  open();
-                }}
-              >
-                <HardDriveUpload size={15} />
-                Choose files
-              </button>
-              <button
-                className="upload-choice"
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  folderInputRef.current?.click();
-                }}
-              >
-                <FolderOpen size={15} />
-                Choose folder
-              </button>
             </span>
           </section>
 
