@@ -267,11 +267,20 @@ export default function Home() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {filtered.map((note) => (
-              <div key={note.id} style={{
-                display: "flex", alignItems: "center", gap: 14,
-                background: "var(--surface)", borderRadius: 14,
-                padding: "14px 16px", border: "1px solid var(--line)",
-              }}>
+              <a
+                key={note.id}
+                href={!isPending(note.file_size) ? `/api/download?id=${note.telegram_file_id}&name=${encodeURIComponent(note.file_name)}` : undefined}
+                download={!isPending(note.file_size) ? note.file_name : undefined}
+                style={{
+                  display: "flex", alignItems: "center", gap: 14,
+                  background: "var(--surface)", borderRadius: 14,
+                  padding: "14px 16px", border: "1px solid var(--line)",
+                  textDecoration: "none", cursor: isPending(note.file_size) ? "default" : "pointer",
+                  transition: "box-shadow 0.15s, border-color 0.15s",
+                }}
+                onMouseEnter={e => { if (!isPending(note.file_size)) { (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--blue)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 0 3px var(--blue-light)"; } }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--line)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
+              >
                 {/* Icon */}
                 <div style={{
                   width: 44, height: 44, borderRadius: 12, flexShrink: 0,
@@ -292,18 +301,13 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Download */}
+                {/* Download icon (visual only) */}
                 {!isPending(note.file_size) && (
-                  <a
-                    href={`/api/download?id=${note.telegram_file_id}&name=${encodeURIComponent(note.file_name)}`}
-                    download
-                    title={`Download ${note.file_name}`}
-                    style={{ color: "var(--text-soft)", padding: 8, display: "flex", flexShrink: 0 }}
-                  >
+                  <span style={{ color: "var(--text-soft)", padding: 8, display: "flex", flexShrink: 0 }}>
                     <ArrowDownToLine size={20} />
-                  </a>
+                  </span>
                 )}
-              </div>
+              </a>
             ))}
           </div>
         )}
