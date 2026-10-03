@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const CORRECT_PIN = '01407286010';
+const CORRECT_PIN = process.env.APP_PIN || '01407286010';
 const BLOCK_TIME_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 3;
 
