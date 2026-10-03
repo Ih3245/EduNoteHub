@@ -161,9 +161,6 @@ export default function Home() {
       }}>
         {/* Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 9, background: "var(--blue)", color: "#fff", display: "grid", placeItems: "center", flexShrink: 0 }}>
-            <Files size={18} />
-          </div>
           {!showSearch && (
             <span style={{ fontWeight: 700, fontSize: 17, color: "var(--text)", letterSpacing: "-0.3px" }}>
               Edu<span style={{ color: "var(--blue)" }}>Note</span>
