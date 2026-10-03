@@ -262,48 +262,51 @@ export default function Home() {
             </p>
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+            gap: 10,
+          }}>
             {filtered.map((note) => (
               <a
                 key={note.id}
                 href={!isPending(note.file_size) ? `/api/download?id=${note.telegram_file_id}&name=${encodeURIComponent(note.file_name)}` : undefined}
                 download={!isPending(note.file_size) ? note.file_name : undefined}
                 style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  background: "var(--surface)", borderRadius: 14,
-                  padding: "14px 16px", border: "1px solid var(--line)",
+                  display: "flex", flexDirection: "column", alignItems: "center",
+                  textAlign: "center", gap: 10,
+                  background: "var(--surface)", borderRadius: 16,
+                  padding: "20px 10px 16px", border: "1px solid var(--line)",
                   textDecoration: "none", cursor: isPending(note.file_size) ? "default" : "pointer",
                   transition: "box-shadow 0.15s, border-color 0.15s",
+                  minWidth: 0,
                 }}
                 onMouseEnter={e => { if (!isPending(note.file_size)) { (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--blue)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 0 3px var(--blue-light)"; } }}
                 onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--line)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
               >
-                {/* Icon */}
                 <div style={{
-                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                  width: 52, height: 52, borderRadius: 14,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   background: note.file_type === "image" ? "#fff7ed" : note.file_type === "zip" ? "#f5f3ff" : "var(--blue-light)",
                   color: note.file_type === "image" ? "var(--orange)" : note.file_type === "zip" ? "var(--purple)" : "var(--blue)",
                 }}>
-                  {isPending(note.file_size) ? <Loader2 size={20} style={{ animation: "spin 1s linear infinite" }} /> : getIcon(note.file_type)}
+                  {isPending(note.file_size)
+                    ? <Loader2 size={24} style={{ animation: "spin 1s linear infinite" }} />
+                    : getIcon(note.file_type)}
                 </div>
 
-                {/* Info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontWeight: 600, fontSize: 15, color: "var(--text)", margin: "0 0 3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {note.file_name}
-                  </p>
-                  <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>
-                    {isPending(note.file_size) ? note.file_size : `${note.file_size} · ${new Date(note.created_at).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" })}`}
-                  </p>
-                </div>
+                <p style={{
+                  fontWeight: 600, fontSize: 12, color: "var(--text)", margin: 0,
+                  width: "100%", overflow: "hidden", textOverflow: "ellipsis",
+                  display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                  lineHeight: "1.4", wordBreak: "break-all",
+                }}>
+                  {note.file_name}
+                </p>
 
-                {/* Download icon (visual only) */}
-                {!isPending(note.file_size) && (
-                  <span style={{ color: "var(--text-soft)", padding: 8, display: "flex", flexShrink: 0 }}>
-                    <ArrowDownToLine size={20} />
-                  </span>
-                )}
+                <p style={{ fontSize: 11, color: "var(--text-muted)", margin: 0 }}>
+                  {note.file_size}
+                </p>
               </a>
             ))}
           </div>
