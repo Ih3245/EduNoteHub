@@ -62,7 +62,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ error: `Incorrect PIN. ${remaining} attempts remaining.` }, { status: 401 });
 
-  } catch (err) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  } catch (err: any) {
+    console.error("Auth Error:", err);
+    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 });
   }
 }

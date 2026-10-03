@@ -10,6 +10,14 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    // Focus the input as soon as the page loads
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +40,10 @@ export default function LoginPage() {
       } else {
         setError(data.error || "Incorrect PIN");
         setPin("");
+        if (inputRef.current) inputRef.current.focus();
       }
     } catch (err) {
-      setError("Failed to verify PIN. Try again.");
+      setError("Network or Server Error. Try again.");
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +74,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <input
+            ref={inputRef}
             type="password"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
