@@ -99,14 +99,24 @@ export default function Home() {
     const folders = new Map<string, { file: File; path: string }[]>();
     for (const file of files) {
       const f = file as FileWithPath;
-      const raw = f.webkitRelativePath || f.path || "";
-      const parts = raw.replace(/\\/g, "/").replace(/^\.\?\//, "").replace(/^\/+/, "").split("/").filter(Boolean);
-      if (parts.length < 2) { await uploadFile(file); continue; }
+      // Only treat as folder upload if webkitRelativePath has a subfolder (e.g. "FolderName/file.jpg")
+      // Do NOT use f.path — it causes false positives on mobile
+      const relativePath = f.webkitRelativePath || "";
+      const parts = relativePath.split("/").filter(Boolean);
+
+      if (parts.length < 2) {
+        // Regular file — upload directly, no zipping
+        await uploadFile(file);
+        continue;
+      }
+
+      // This file came from a folder picker — group by folder name
       const folder = parts[0];
       const arr = folders.get(folder) ?? [];
       arr.push({ file, path: parts.slice(1).join("/") });
       folders.set(folder, arr);
     }
+
     for (const [name, items] of folders) {
       await uploadFile(
         new File([], `${name}.zip`, { type: "application/zip" }),
