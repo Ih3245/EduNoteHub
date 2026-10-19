@@ -15,8 +15,8 @@
   --bg:#F4F5F7;--card:#fff;--ink:#17181C;--muted:#6A6E79;--line:#E3E5EA;
   --brand:#D93A2F;--brand-soft:#FDECEA;--sun:#FFC93C;--ok:#1E8A59;--ok-soft:#E3F4EB;--bad:#B4281F;
   --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;
-  --r:10px;--rl:14px;
-  --sh:0 1px 2px rgba(23,24,28,.06),0 10px 28px -14px rgba(23,24,28,.18);
+  --r:12px;--rl:18px;
+  --sh:0 1px 3px rgba(23,24,28,.05),0 12px 28px -12px rgba(23,24,28,.14);
   --f:'Schibsted Grotesk','Hind Siliguri',sans-serif;
 }
 *{box-sizing:border-box}
@@ -26,68 +26,85 @@ button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .ic{width:20px;height:20px;flex:none}
-.bar{display:flex;align-items:center;justify-content:flex-start;gap:var(--s4);padding:var(--s4) var(--s6);max-width:1120px;margin:0 auto}
+
+/* Header bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s4) var(--s6);max-width:960px;margin:0 auto}
 .status-indicator{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
 .status-dot{width:9px;height:9px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
 .status-dot.online{background:var(--ok);box-shadow:0 0 8px rgba(30,138,89,.5)}
-.shell{display:grid;grid-template-columns:64px 1fr;gap:var(--s5);max-width:1120px;margin:0 auto;padding:var(--s2) var(--s6) var(--s7);align-items:start}
-.card{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:var(--s5)}
-.stamp{background:var(--brand);color:#fff;border-radius:var(--r);height:44px;display:grid;place-items:center;margin-bottom:4px;user-select:none}
-.stamp-lbl{font-size:10px;font-weight:800;text-align:center;color:var(--muted);margin-bottom:var(--s4);text-transform:uppercase;letter-spacing:.04em}
+
+.header-myid-pill{display:none;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);padding:5px 12px;border-radius:99px;font-size:13px;font-weight:700}
+.header-myid-pill b{color:var(--brand);font-size:15px}
+
+/* Desktop & General Shell */
+.shell{display:grid;grid-template-columns:74px 1fr;gap:var(--s5);max-width:960px;margin:0 auto;padding:var(--s2) var(--s6) var(--s7);align-items:start}
+.card{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:var(--s5);transition:box-shadow .2s}
+.stamp{background:var(--brand);color:#fff;border-radius:var(--r);height:50px;display:grid;place-items:center;margin-bottom:4px;user-select:none;box-shadow:0 4px 12px rgba(217,58,47,.25)}
+.stamp-lbl{font-size:11px;font-weight:800;text-align:center;color:var(--muted);margin-bottom:var(--s4);text-transform:uppercase;letter-spacing:.04em}
 .online-lbl{font-size:10px;font-weight:800;color:var(--muted);margin-bottom:var(--s2);text-align:center;text-transform:uppercase;letter-spacing:.04em}
 #seats{flex-direction:column;flex-wrap:nowrap;align-items:center}
 aside .card{background:none;box-shadow:none;padding:0}
-.stamp .big{font:800 24px/1.4 var(--f)}
+.stamp .big{font:800 26px/1 var(--f)}
 .stamp .big.pop{animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+
 .seatrow{display:flex;flex-wrap:wrap;gap:var(--s2)}
-.seat{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font:700 17px var(--f);display:grid;place-items:center;padding:0;transition:background .15s,border-color .15s}
-.seat.sm{width:34px;height:34px;font-size:15px}
+.seat{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font:700 16px var(--f);display:grid;place-items:center;padding:0;transition:background .15s,border-color .15s}
+.seat.sm{width:32px;height:32px;font-size:14px}
 .seat.active-peer{border-color:var(--ok);font-weight:800;background:var(--ok-soft);color:var(--ok)}
-.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s1);background:#E9EBEF;border-radius:var(--rl);padding:var(--s1);margin-bottom:var(--s5)}
-.seg button{min-height:48px;display:flex;align-items:center;justify-content:center;gap:var(--s2);border:0;background:none;border-radius:var(--r);font-weight:700;color:var(--muted);transition:background .15s,color .15s}
+
+/* Tab Navigation */
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s1);background:#E9EBEF;border-radius:var(--r);padding:var(--s1);margin-bottom:var(--s5)}
+.seg button{min-height:46px;display:flex;align-items:center;justify-content:center;gap:6px;border:0;background:none;border-radius:calc(var(--r) - 2px);font-weight:700;font-size:14px;color:var(--muted);transition:background .15s,color .15s,transform .1s}
+.seg button:active{transform:scale(.98)}
 .seg button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
-.seg i{font-style:normal;min-width:22px;height:22px;border-radius:11px;background:var(--brand);color:#fff;font-size:13px;display:inline-grid;place-items:center;padding:0 6px}
+.seg i{font-style:normal;min-width:20px;height:20px;border-radius:10px;background:var(--brand);color:#fff;font-size:12px;display:inline-grid;place-items:center;padding:0 5px}
 
 .dim{color:var(--muted)}
-.drop{border:2px dashed #CBCFD8;border-radius:var(--rl);padding:var(--s6) var(--s5);text-align:center;transition:background .15s,border-color .15s}
+.drop{border:2px dashed #CBCFD8;border-radius:var(--r);padding:var(--s6) var(--s4);text-align:center;transition:background .15s,border-color .15s;background:#FAFAFC}
 .drop.over{background:var(--brand-soft);border-color:var(--brand)}
-.drop .ic{width:40px;height:40px;color:var(--brand);margin-bottom:var(--s3)}
+.drop .ic{width:38px;height:38px;color:var(--brand);margin-bottom:var(--s2)}
 .drop .row{display:flex;justify-content:center;gap:var(--s3);flex-wrap:wrap}
-.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--ink);border-radius:var(--r);background:#fff;padding:0 var(--s5);font-weight:700;cursor:pointer;transition:background .15s}
+
+.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--ink);border-radius:var(--r);background:#fff;padding:0 var(--s5);font-weight:700;font-size:15px;cursor:pointer;transition:background .15s,transform .1s}
+.btn:active{transform:scale(.98)}
 .btn:hover{background:#F0F1F4}
 
-/* Clean Action Footer with inline Target ID input */
+/* Action Footer with target ID input */
 .foot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s3);margin-top:var(--s5)}
 .foot .sum:empty{display:none}
-.sum{color:var(--muted);font-size:14px}
-.send-bar{display:flex;align-items:center;justify-content:center;gap:var(--s2);width:100%}
-.id-inp{width:110px;min-height:46px;border:1.5px solid var(--line);border-radius:var(--r);padding:0 var(--s3);font-size:16px;font-weight:800;text-align:center;background:#fff;transition:border-color .15s,box-shadow .15s}
+.sum{color:var(--muted);font-size:14px;font-weight:600}
+.send-bar{display:flex;align-items:center;justify-content:center;gap:var(--s2);width:100%;max-width:360px}
+.id-inp{width:115px;min-height:48px;border:1.5px solid var(--line);border-radius:var(--r);padding:0 var(--s3);font-size:17px;font-weight:800;text-align:center;background:#fff;transition:border-color .15s,box-shadow .15s}
 .id-inp:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 3px rgba(23,24,28,.08)}
-.id-inp::placeholder{font-size:13px;font-weight:600;color:#9A9EA9}
-.go{min-height:46px;padding:0 var(--s5);display:inline-flex;align-items:center;gap:var(--s2);border:0;border-radius:var(--r);background:var(--brand);color:#fff;font-weight:700;transition:background .15s}
+.id-inp::placeholder{font-size:14px;font-weight:600;color:#9A9EA9}
+.go{flex:1;min-height:48px;padding:0 var(--s5);display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);border:0;border-radius:var(--r);background:var(--brand);color:#fff;font-weight:800;font-size:16px;transition:background .15s,transform .1s;box-shadow:0 4px 14px rgba(217,58,47,.25)}
+.go:active:not(:disabled){transform:scale(.98)}
 .go .ic{width:18px;height:18px}
 .go:hover:not(:disabled){background:#BF2F25}
-.go:disabled{background:#E3E5EA;color:#9A9EA9;cursor:not-allowed}
+.go:disabled{background:#E3E5EA;color:#9A9EA9;cursor:not-allowed;box-shadow:none}
 
-.shell>*{min-width:0}
 .fl{list-style:none;margin:var(--s4) 0 0;padding:0;display:grid;gap:var(--s2);text-align:left;max-height:240px;overflow:auto}
 .fl li{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3);background:var(--bg);border-radius:var(--r)}
 .ext{min-width:44px;height:32px;border-radius:6px;background:var(--ink);color:#fff;font:700 12px var(--f);display:grid;place-items:center;padding:0 6px}
-.fl .n{flex:1;overflow-wrap:anywhere;line-height:1.3}
-.fl .z{color:var(--muted);font-size:14px;white-space:nowrap}
-.fl a{color:var(--ok);font-weight:700}
-textarea{width:100%;min-height:260px;border:1.5px solid var(--line);border-radius:var(--r);padding:var(--s4);font:14px/1.6 Consolas,'Courier New',monospace;resize:vertical;background:#FBFBFC}
+.fl .n{flex:1;overflow-wrap:anywhere;line-height:1.3;font-weight:600}
+.fl .z{color:var(--muted);font-size:13px;white-space:nowrap}
+.fl a{color:var(--ok);font-weight:700;text-decoration:none}
+.fl a:hover{text-decoration:underline}
+
+textarea{width:100%;min-height:220px;border:1.5px solid var(--line);border-radius:var(--r);padding:var(--s4);font:15px/1.6 Consolas,'Courier New',monospace;resize:vertical;background:#FBFBFC;transition:border-color .15s}
 textarea:focus{border-color:var(--ink);outline:none}
-.cnt{margin:var(--s2) 0 0;font-size:14px;color:var(--muted);text-align:right}
+.cnt{margin:var(--s2) 0 0;font-size:13px;color:var(--muted);text-align:right;font-weight:600}
+
 .xf{list-style:none;margin:var(--s5) 0 0;padding:0;display:grid;gap:var(--s2)}
 .xf li{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);background:var(--card);border-radius:var(--r);box-shadow:var(--sh)}
-.xf .xl{flex:1}
+.xf .xl{flex:1;font-weight:600}
 .dots{display:flex;gap:var(--s1)}
 .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 13px var(--f);background:#EEF0F3;color:var(--muted)}
 .dot.ok{background:var(--ok-soft);color:var(--ok)}
 .dot.no{background:var(--brand-soft);color:var(--bad)}
 .dot.wait{background:#FFF3CC;color:#7A5B00}
+
 .item{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:var(--s5);margin-bottom:var(--s4);border-top:5px solid var(--sun)}
 .item.received{border-top-color:var(--ok)}
 .item.blocked{border-top-color:var(--line);display:flex;align-items:center;gap:var(--s3);color:var(--muted)}
@@ -100,16 +117,40 @@ textarea:focus{border-color:var(--ink);outline:none}
 .acts .block{min-height:48px;padding:0 var(--s5);border:1.5px solid var(--line);border-radius:var(--r);background:#fff;font-weight:700;color:var(--bad)}
 .empty{display:grid;place-items:center;padding:var(--s7) 0;color:#B8BCC6}
 .empty .ic{width:64px;height:64px}
-@media (max-width:860px){
-  .bar{padding:var(--s3) var(--s4)}
-  .shell{grid-template-columns:52px 1fr;padding:var(--s2) var(--s4) var(--s6);gap:var(--s3)}
-  .send-bar{flex-direction:row}
-  .card{padding:var(--s4)}
-  .drop{padding:var(--s5) var(--s3)}
-  textarea{min-height:180px}
-  .item{padding:var(--s4)}
-  .seg button span{display:none}
-  .seg button{min-height:52px}
+
+/* Incoming Notification Modal Popup */
+.modal-overlay{position:fixed;inset:0;background:rgba(23,24,28,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:99999;animation:modalFade .2s ease-out}
+.modal-card{background:#fff;border-radius:24px;box-shadow:0 24px 56px rgba(0,0,0,.28);max-width:390px;width:100%;padding:28px 22px;text-align:center;animation:modalScale .25s cubic-bezier(.16,1,.3,1)}
+.modal-badge{width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff;font:800 24px/56px var(--f);display:inline-grid;place-items:center;margin-bottom:14px;box-shadow:0 8px 20px rgba(217,58,47,.3)}
+.modal-badge.ok{background:var(--ok);box-shadow:0 8px 20px rgba(30,138,89,.3)}
+.modal-title{font-size:20px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em}
+.modal-desc{font-size:14px;color:var(--muted);margin:0 0 16px;line-height:1.4}
+.modal-filebox{background:var(--bg);border-radius:var(--r);padding:12px;margin-bottom:20px;text-align:left;max-height:160px;overflow:auto}
+.modal-acts{display:flex;gap:10px}
+.modal-allow{flex:1;min-height:50px;border:0;border-radius:var(--r);background:var(--ok);color:#fff;font-weight:800;font-size:16px;cursor:pointer;transition:background .15s,transform .1s}
+.modal-allow:active{transform:scale(.98)}
+.modal-allow:hover{background:#17714A}
+.modal-block{min-height:50px;padding:0 20px;border:1.5px solid var(--line);border-radius:var(--r);background:#fff;color:var(--bad);font-weight:700;font-size:15px;cursor:pointer;transition:background .15s}
+.modal-block:hover{background:#FDF2F1}
+
+@keyframes modalFade{from{opacity:0}to{opacity:1}}
+@keyframes modalScale{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+
+/* Mobile-First Responsive Styles */
+@media (max-width:768px){
+  .bar{padding:12px 16px}
+  .header-myid-pill{display:inline-flex}
+  .shell{display:flex;flex-direction:column;padding:0 14px 28px;gap:12px}
+  aside{display:none} /* Clean full width on phone */
+  .card{padding:16px;border-radius:16px}
+  .drop{padding:24px 12px}
+  .seg{gap:2px;padding:3px;border-radius:10px;margin-bottom:16px}
+  .seg button{min-height:42px;font-size:12px;padding:0 4px;gap:4px}
+  .seg button span{display:inline}
+  .send-bar{max-width:100%}
+  .id-inp{width:90px;min-height:46px;font-size:16px}
+  .go{min-height:46px;font-size:15px}
+  .modal-card{padding:22px 16px;border-radius:20px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -119,6 +160,10 @@ textarea:focus{border-color:var(--ink);outline:none}
   <div class="status-indicator" id="netStatus" title="Network status">
     <span class="status-dot"></span>
     <span class="status-text">Connecting...</span>
+  </div>
+  <div class="header-myid-pill">
+    <span>Your ID:</span>
+    <b id="headerMyId">–</b>
   </div>
 </header>
 <div class="shell">
@@ -137,6 +182,10 @@ textarea:focus{border-color:var(--ink);outline:none}
     <section id="panel" role="tabpanel"></section>
   </main>
 </div>
+
+<!-- Modal Container for Instant Notification Window -->
+<div id="modalHost"></div>
+
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -295,7 +344,9 @@ function handle(m) {
   if (m.t === 'offer') {
     const isForMe = m.to === 'all' || (Array.isArray(m.to) && m.to.includes(me.id)) || m.toId === me.id;
     if (!isForMe) return;
-    inbox.unshift({ ...m, status: 'pending', from: { id: m.fromId || m.from?.id || '?' } });
+    const item = { ...m, status: 'pending', from: { id: m.fromId || m.from?.id || '?' } };
+    inbox.unshift(item);
+    showIncomingNotification(item);
     draw();
     return;
   }
@@ -350,8 +401,105 @@ function handle(m) {
       else blob = new Blob([f.blob || f]);
       return { name: f.name, url: URL.createObjectURL(blob), size: f.size };
     });
+
+    // Automatic download and notification update!
+    onDataReceived(it);
     draw();
   }
+}
+
+/* Incoming Notification Modal logic */
+function showIncomingNotification(item) {
+  const fromId = item.from.id;
+  const isText = item.kind === 'text';
+  let previewHtml = '';
+
+  if (isText) {
+    previewHtml = `<div class="modal-filebox"><p style="margin:0;font-size:14px;color:var(--ink);">${esc(item.meta.preview)}…</p></div>`;
+  } else {
+    previewHtml = `
+      <div class="modal-filebox">
+        <ul class="fl" style="margin:0;">
+          ${(item.meta || []).slice(0, 4).map(f => `
+            <li>
+              <span class="ext">${esc(ext(f.name))}</span>
+              <span class="n">${esc(f.name)}</span>
+              <span class="z">${fmt(f.size)}</span>
+            </li>
+          `).join('')}
+          ${item.meta && item.meta.length > 4 ? `<li><span class="n dim">+${item.meta.length - 4} more</span></li>` : ''}
+        </ul>
+      </div>
+    `;
+  }
+
+  const modalHtml = `
+    <div class="modal-overlay" id="activeModal">
+      <div class="modal-card">
+        <div class="modal-badge">${fromId}</div>
+        <h3 class="modal-title">Incoming from ID ${fromId}</h3>
+        <p class="modal-desc">${isText ? 'Sent you a text note' : `${(item.meta || []).length} file(s) ready to transfer`}</p>
+        ${previewHtml}
+        <div class="modal-acts" id="modalActions">
+          <button class="modal-block" id="modalDecline">Decline</button>
+          <button class="modal-allow" id="modalAllow">Allow & Receive</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $('#modalHost').innerHTML = modalHtml;
+
+  $('#modalAllow').onclick = () => {
+    item.status = 'accepting';
+    post({ t: 'ok', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
+    $('#modalActions').innerHTML = `<p style="margin:0;font-size:15px;font-weight:700;color:var(--ok);">Receiving automatically… ⏳</p>`;
+  };
+
+  $('#modalDecline').onclick = () => {
+    item.status = 'blocked';
+    post({ t: 'no', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
+    closeModal();
+    draw();
+  };
+}
+
+function onDataReceived(item) {
+  // 1. Auto download files!
+  if (item.urls && item.urls.length) {
+    item.urls.forEach((u, idx) => {
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = u.url;
+        a.download = u.name.split('/').pop() || 'download';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }, idx * 200);
+    });
+  }
+
+  // 2. Auto copy text to clipboard if it was a text beam
+  if (item.text) {
+    try { navigator.clipboard.writeText(item.text); } catch (e) {}
+  }
+
+  // 3. Update the modal with success feedback
+  const card = $('#activeModal .modal-card');
+  if (card) {
+    card.innerHTML = `
+      <div class="modal-badge ok">✓</div>
+      <h3 class="modal-title">${item.text ? 'Text Received!' : 'Files Saved!'}</h3>
+      <p class="modal-desc">${item.text ? 'Message copied to your clipboard.' : 'Your file(s) have been downloaded automatically.'}</p>
+      <button class="btn" style="width:100%;margin-top:10px;" id="modalDoneBtn">Done</button>
+    `;
+    $('#modalDoneBtn').onclick = closeModal;
+    setTimeout(closeModal, 2200);
+  }
+}
+
+function closeModal() {
+  $('#modalHost').innerHTML = '';
 }
 
 setInterval(() => {
@@ -398,6 +546,8 @@ function draw() {
     void big.offsetWidth;
     big.classList.add('pop');
   }
+  const hId = $('#headerMyId');
+  if (hId) hId.textContent = v;
 
   const onlineOthers = others().filter(p => p.id !== me.id);
   const seatsEl = $('#seats');
@@ -432,6 +582,7 @@ function drawPanel() {
     el.innerHTML = `
       <div class="card">
         <div class="drop" id="dz">
+          ${svg('send')}
           <div class="row">
             <label class="btn">Files<input type="file" id="f1" multiple hidden></label>
             <label class="btn">Folder<input type="file" id="f2" webkitdirectory hidden></label>
@@ -439,9 +590,9 @@ function drawPanel() {
           ${staged.length ? `<ul class="fl">${fileRows(staged)}</ul>` : ''}
         </div>
         <div class="foot">
-          <span class="sum">${staged.length ? staged.length + ' · ' + fmt(staged.reduce((a,f) => a + f.size, 0)) : ''}</span>
+          <span class="sum">${staged.length ? staged.length + ' file(s) · ' + fmt(staged.reduce((a,f) => a + f.size, 0)) : ''}</span>
           <div class="send-bar">
-            ${tab !== 'group' ? `<input type="number" class="id-inp" id="targetIdInput" min="1" max="999" placeholder="Target ID" value="${targetId || ''}" autocomplete="off" title="Enter recipient ID and press Enter or Send">` : ''}
+            ${tab !== 'group' ? `<input type="number" class="id-inp" id="targetIdInput" min="1" max="999" placeholder="Target ID" value="${targetId || ''}" autocomplete="off" title="Enter recipient ID and click Send or press Enter">` : ''}
             <button class="go" data-act="sendfiles" ${canSend() ? '' : 'disabled'}>Send</button>
           </div>
         </div>
@@ -452,11 +603,11 @@ function drawPanel() {
     const n = textVal ? textVal.split('\n').length : 0;
     el.innerHTML = `
       <div class="card">
-        <textarea id="txt" aria-label="Text" placeholder="Type your text message here..." spellcheck="false">${esc(textVal)}</textarea>
+        <textarea id="txt" aria-label="Text" placeholder="Type notes, links, code, or messages to beam..." spellcheck="false">${esc(textVal)}</textarea>
         <div class="foot">
           <span class="sum" id="cnt">${n} lines · ${textVal.length} chars</span>
           <div class="send-bar">
-            <input type="number" class="id-inp" id="targetIdInput" min="1" max="999" placeholder="Target ID" value="${targetId || ''}" autocomplete="off" title="Enter recipient ID and press Enter or Send">
+            <input type="number" class="id-inp" id="targetIdInput" min="1" max="999" placeholder="Target ID" value="${targetId || ''}" autocomplete="off" title="Enter recipient ID and click Send or press Enter">
             <button class="go" data-act="sendtext" ${canSend() ? '' : 'disabled'}>Send</button>
           </div>
         </div>
@@ -464,7 +615,7 @@ function drawPanel() {
       ${xfers()}
     `;
   } else {
-    el.innerHTML = inbox.length ? inbox.map(itemHtml).join('') : `<div class="empty">${svg('inbox')}</div>`;
+    el.innerHTML = inbox.length ? inbox.map(itemHtml).join('') : `<div class="empty">${svg('inbox')}<p style="margin-top:10px;font-size:14px;color:var(--muted);">No transfers yet</p></div>`;
   }
 }
 
@@ -473,7 +624,7 @@ function itemHtml(i) {
   const av = `<span class="seat sm">${fromId}</span>`;
   if (i.status === 'blocked') return `<article class="item blocked">${av}<span>Blocked from ID ${fromId}</span></article>`;
   const list = i.kind === 'text' ? `<p class="pv">${esc(i.meta.preview)}…</p>` : `<ul class="fl">${fileRows(i.meta.slice(0,6))}${i.meta.length > 6 ? `<li><span class="n dim">+${i.meta.length - 6}</span></li>`:''}</ul>`;
-  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>Incoming from ID ${fromId} (${i.kind === 'text' ? 'Text, ' + i.meta.size + ' chars' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')})</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
+  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>Incoming from ID ${fromId} (${i.kind === 'text' ? 'Text' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')})</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
   if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">Receiving from ID ${fromId}…</span></div></article>`;
   const body = i.kind === 'text' ? `<pre>${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
     : `<ul class="fl">${i.urls.map(u => `<li><span class="ext">${esc(ext(u.name))}</span><span class="n">${esc(u.name)}</span><span class="z">${fmt(u.size)}</span><a href="${u.url}" download="${esc(u.name.split('/').pop())}">Save</a></li>`).join('')}</ul>`;
