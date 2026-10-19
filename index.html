@@ -38,11 +38,6 @@ button{cursor:pointer}
 
 /* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 8px;gap:8px}
-.status-indicator{display:flex;align-items:center;flex:none}
-.status-dot{width:10px;height:10px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
-.status-dot.online{background:var(--net-green);box-shadow:0 0 8px rgba(30,138,89,.6)}
-
-.header-right-group{display:flex;align-items:center;gap:8px;flex:none}
 
 /* Universal Allow Toggle */
 .auto-allow-toggle{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--line);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;user-select:none;transition:border-color .15s,background .15s,color .15s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
@@ -273,21 +268,16 @@ textarea:focus{border-color:var(--orange);background:#fff;outline:none}
 <body>
 
 <div class="app-wrap">
-  <!-- Top bar with Online indicator dot, Universal Allow toggle & Single "Your ID" badge -->
+  <!-- Top bar with Universal Allow toggle & Single "Your ID" badge -->
   <header class="top-bar">
-    <div class="status-indicator" id="netStatus" title="Network status">
-      <span class="status-dot"></span>
-    </div>
-    <div class="header-right-group">
-      <label class="auto-allow-toggle" title="Universal Allow: Automatically accept incoming transfers without permission prompt">
-        <input type="checkbox" id="autoAllowCheck">
-        <span class="toggle-slider"></span>
-        <span class="auto-allow-text">Universal Allow</span>
-      </label>
-      <div class="my-id-badge">
-        <span>Your ID:</span>
-        <b id="myid">–</b>
-      </div>
+    <label class="auto-allow-toggle" title="Universal Allow: Automatically accept incoming transfers without permission prompt">
+      <input type="checkbox" id="autoAllowCheck">
+      <span class="toggle-slider"></span>
+      <span class="auto-allow-text">Universal Allow</span>
+    </label>
+    <div class="my-id-badge">
+      <span>Your ID:</span>
+      <b id="myid">–</b>
     </div>
   </header>
 
@@ -383,19 +373,7 @@ function pickAvailableId() {
   return id;
 }
 
-function updateNetStatus(online) {
-  const dot = $('#netStatus .status-dot');
-  const wrap = $('#netStatus');
-  if (dot) {
-    if (online) {
-      dot.className = 'status-dot online';
-      if (wrap) wrap.title = 'Status: Online';
-    } else {
-      dot.className = 'status-dot';
-      if (wrap) wrap.title = 'Status: Connecting...';
-    }
-  }
-}
+function updateNetStatus() {}
 
 function initPeer() {
   if (peer && !peer.destroyed) return;
