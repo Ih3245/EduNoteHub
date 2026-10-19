@@ -333,6 +333,7 @@ const me = {
 
 let ch, mqttClient, peer;
 let peers = new Map(), sent = new Map(), log = [], inbox = [], tab = 'send', staged = [], textVal = '', targetId = null, lastSig = '';
+let pendingOffers = new Map(), declinedOids = new Set();
 let autoAllow = localStorage.getItem('dak_universal_allow') === 'true';
 const others = () => [...peers.values()].sort((a,b) => a.id - b.id);
 
@@ -491,17 +492,21 @@ function handle(m) {
   if (m.t === 'offer') {
     const isForMe = m.to === 'all' || (Array.isArray(m.to) && m.to.some(x => Number(x) === Number(me.id))) || Number(m.toId) === Number(me.id);
     if (!isForMe) return;
+    if (declinedOids.has(m.oid)) return;
+    if (pendingOffers.has(m.oid) || inbox.some(i => i.oid === m.oid)) return;
+
     const item = { ...m, status: 'pending', from: { id: m.fromId || m.from?.id || '?' } };
-    inbox.unshift(item);
+    pendingOffers.set(item.oid, item);
 
     if (autoAllow) {
       item.status = 'accepting';
+      inbox.unshift(item);
+      pendingOffers.delete(item.oid);
       post({ t: 'ok', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
       showToast(`⚡ Universal Allow: Auto-accepting from ID ${item.from.id}…`);
       draw();
     } else {
       showIncomingNotification(item);
-      draw();
     }
     return;
   }
@@ -545,8 +550,16 @@ function handle(m) {
     if (o) { o.res[m.fromId] = 'no'; drawPanel(); }
   }
   if (m.t === 'data') {
-    const it = inbox.find(i => i.oid === m.oid);
-    if (!it) return;
+    if (declinedOids.has(m.oid)) return;
+    let it = inbox.find(i => i.oid === m.oid);
+    if (!it) {
+      it = pendingOffers.get(m.oid);
+      if (it) {
+        inbox.unshift(it);
+        pendingOffers.delete(m.oid);
+      }
+    }
+    if (!it || it.status === 'received') return;
     it.status = 'received';
     it.text = m.text;
     it.urls = (m.files || []).map(f => {
@@ -618,6 +631,8 @@ function showIncomingNotification(item) {
 
   $('#modalAllow').onclick = () => {
     item.status = 'accepting';
+    inbox.unshift(item);
+    pendingOffers.delete(item.oid);
     post({ t: 'ok', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
     closeModal();
     tab = 'receive';
@@ -626,8 +641,10 @@ function showIncomingNotification(item) {
   };
 
   const declineTransfer = () => {
-    post({ t: 'no', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
+    declinedOids.add(item.oid);
+    pendingOffers.delete(item.oid);
     inbox = inbox.filter(x => x.oid !== item.oid);
+    post({ t: 'no', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
     closeModal();
     showToast('Transfer declined');
     draw();
@@ -1054,21 +1071,6 @@ document.addEventListener('click', async e => {
     }
     offer('text', { text: textVal }, 'Text', { size: textVal.length, preview: textVal.slice(0, 80) }, [targetId]);
     textVal = ''; drawPanel();
-    return;
-  }
-
-  if (a === 'allow' && i) {
-    i.status = 'accepting';
-    post({ t: 'ok', oid: i.oid, toUid: i.uid, toId: i.from.id, fromId: me.id });
-    drawPanel();
-    return;
-  }
-
-  if (a === 'block' && i) {
-    post({ t: 'no', oid: i.oid, toUid: i.uid, toId: i.from.id, fromId: me.id });
-    inbox = inbox.filter(x => x.oid !== i.oid);
-    showToast('Transfer declined');
-    draw();
     return;
   }
 
