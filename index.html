@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.2.0/mqtt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <style>
 :root{
   color-scheme:light;
@@ -24,10 +26,10 @@ button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .ic{width:20px;height:20px;flex:none}
-.bar{display:flex;align-items:center;justify-content:flex-end;gap:var(--s4);padding:var(--s4) var(--s6);max-width:1120px;margin:0 auto}
-.logo{display:flex;align-items:center;gap:var(--s2);font:800 26px/1 var(--f);letter-spacing:-.02em}
-.logo .ic{width:30px;height:30px;color:var(--brand)}
-.logo small{font:600 18px var(--f);color:var(--muted)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);padding:var(--s4) var(--s6);max-width:1120px;margin:0 auto}
+.status-indicator{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
+.status-dot{width:9px;height:9px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
+.status-dot.online{background:var(--ok);box-shadow:0 0 8px rgba(30,138,89,.5)}
 .room{display:flex;gap:var(--s2)}
 .room input{width:150px;min-height:44px;border:1px solid var(--line);border-radius:var(--r);padding:0 var(--s3);background:var(--card)}
 .room input::placeholder{color:#8A8E99}
@@ -114,7 +116,10 @@ textarea{width:100%;min-height:260px;border:1px solid var(--line);border-radius:
 </head>
 <body>
 <header class="bar">
-  
+  <div class="status-indicator" id="netStatus" title="Status">
+    <span class="status-dot"></span>
+    <span class="status-text">Connecting...</span>
+  </div>
   <div class="room"><input id="room" placeholder="CSE-LAB-302" aria-label="Room" autocomplete="off"><button id="join">Join</button></div>
 </header>
 <div class="shell">
@@ -135,131 +140,354 @@ const P={send:'<path d="M7 3h7l5 5v13H7zM14 3v5h5"/>',group:'<circle cx="9" cy="
 const svg=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
 const ext=n=>{const m=n.match(/\.([A-Za-z0-9]{1,4})$/);return m?m[1].toLowerCase():'file'};
 const me={uid:Math.random().toString(36).slice(2,10),id:0};
-let ch,room='CSE-LAB-302',peers=new Map(),sent=new Map(),log=[],inbox=[],tab='send',targets=new Set(),staged=[],textVal='',lastSig='';
+let ch,mqttClient,peer,room='CSE-LAB-302',peers=new Map(),sent=new Map(),log=[],inbox=[],tab='send',targets=new Set(),staged=[],textVal='',lastSig='';
 const others=()=>[...peers.values()].sort((a,b)=>a.id-b.id);
 const maxId=()=>Math.max(0,me.id,...others().map(p=>p.id));
 
-/* transport: replace this block with a server relay (WebSocket/WebRTC) to link separate PCs */
-function post(m){ch.postMessage({...m,uid:me.uid})}
+function updateNetStatus(online, text) {
+  const dot = $('#netStatus .status-dot');
+  const txt = $('#netStatus .status-text');
+  if (dot && txt) {
+    if (online) {
+      dot.className = 'status-dot online';
+      txt.textContent = text || 'Online';
+      txt.style.color = 'var(--ok)';
+    } else {
+      dot.className = 'status-dot';
+      txt.textContent = text || 'Connecting...';
+      txt.style.color = 'var(--muted)';
+    }
+  }
+}
+
+function initPeer() {
+  if (peer && !peer.destroyed) return;
+  try {
+    peer = new Peer('dak-' + me.uid, {
+      debug: 1,
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:global.stun.twilio.com:3478' }
+        ]
+      }
+    });
+    peer.on('open', () => console.log('PeerJS ready'));
+    peer.on('connection', conn => {
+      conn.on('data', data => {
+        handle(data);
+      });
+    });
+    peer.on('error', err => {
+      console.warn('Peer error:', err.type);
+    });
+  } catch (e) {
+    console.error('Peer init error:', e);
+  }
+}
+
+function post(m){
+  const payload = { ...m, uid: me.uid };
+  if (ch) {
+    try { ch.postMessage(payload); } catch (e) {}
+  }
+  if (mqttClient && mqttClient.connected) {
+    try {
+      if (payload.t !== 'data' || payload.text) {
+        mqttClient.publish('dak/lab/v1/' + encodeURIComponent(room), JSON.stringify(payload));
+      }
+    } catch (e) {}
+  }
+}
+
 function connect(){
-  if(ch){post({t:'bye'});ch.close()}
-  peers.clear();me.id=0;targets.clear();
-  ch=new BroadcastChannel('dak:'+room);ch.onmessage=e=>handle(e.data);
-  post({t:'hi'});
-  setTimeout(()=>{me.id=Math.max(0,...others().map(p=>p.id))+1;beat();draw()},500);
+  if (ch) { post({ t: 'bye' }); try { ch.close(); } catch(e){} }
+  if (mqttClient) {
+    try {
+      mqttClient.publish('dak/lab/v1/' + encodeURIComponent(room), JSON.stringify({ t: 'bye', uid: me.uid }));
+      mqttClient.end();
+    } catch(e){}
+  }
+  peers.clear(); me.id = 0; targets.clear();
+  updateNetStatus(false, 'Connecting...');
+
+  try {
+    ch = new BroadcastChannel('dak:' + room);
+    ch.onmessage = e => handle(e.data);
+  } catch (e) {}
+
+  initPeer();
+
+  const topic = 'dak/lab/v1/' + encodeURIComponent(room);
+  try {
+    mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+      clientId: 'dak_' + me.uid + '_' + Math.random().toString(16).slice(2, 6),
+      clean: true,
+      connectTimeout: 5000,
+      reconnectPeriod: 3000
+    });
+
+    mqttClient.on('connect', () => {
+      mqttClient.subscribe(topic, { qos: 0 });
+      updateNetStatus(true, 'Online');
+      post({ t: 'hi' });
+    });
+
+    mqttClient.on('message', (t, payload) => {
+      try {
+        const m = JSON.parse(payload.toString());
+        if (m && m.uid !== me.uid) {
+          handle(m);
+        }
+      } catch (err) {}
+    });
+
+    mqttClient.on('offline', () => updateNetStatus(false, 'Offline'));
+    mqttClient.on('error', () => updateNetStatus(false, 'Error'));
+  } catch (e) {
+    console.warn('MQTT init error:', e);
+  }
+
+  post({ t: 'hi' });
+  setTimeout(() => {
+    me.id = Math.max(0, ...others().map(p => p.id)) + 1;
+    beat();
+    draw();
+  }, 500);
   draw();
 }
-const beat=()=>{if(me.id)post({t:'beat',id:me.id})};
+
+const beat = () => { if (me.id) post({ t: 'beat', id: me.id }) };
+
 function handle(m){
-  if(m.t==='hi'){beat();return}
-  if(m.t==='beat'){
-    if(m.id===me.id&&m.uid<me.uid){me.id=Math.max(maxId(),m.id)+1;beat()}
-    peers.set(m.uid,{id:m.id,seen:Date.now()});drawIfChanged();return;
+  if (m.t === 'hi') { beat(); return; }
+  if (m.t === 'beat') {
+    if (m.id === me.id && m.uid < me.uid) {
+      me.id = Math.max(maxId(), m.id) + 1;
+      beat();
+    }
+    peers.set(m.uid, { id: m.id, seen: Date.now() });
+    drawIfChanged();
+    return;
   }
-  if(m.t==='bye'){peers.delete(m.uid);draw();return}
-  if(m.t==='offer'){
-    if(m.to!=='all'&&!m.to.includes(me.id))return;
-    inbox.unshift({...m,status:'pending'});draw();return;
+  if (m.t === 'bye') {
+    peers.delete(m.uid);
+    draw();
+    return;
   }
-  if(m.toUid!==me.uid)return;
-  if(m.t==='ok'){const o=sent.get(m.oid);if(!o)return;o.res[m.fromId]='ok';post({t:'data',oid:m.oid,toUid:m.uid,files:o.files,text:o.text});drawPanel()}
-  if(m.t==='no'){const o=sent.get(m.oid);if(o){o.res[m.fromId]='no';drawPanel()}}
-  if(m.t==='data'){
-    const it=inbox.find(i=>i.oid===m.oid);if(!it)return;
-    it.status='received';it.text=m.text;
-    it.urls=(m.files||[]).map(f=>({name:f.name,url:URL.createObjectURL(f.blob),size:f.size}));
+  if (m.t === 'offer') {
+    if (m.to !== 'all' && !m.to.includes(me.id)) return;
+    inbox.unshift({ ...m, status: 'pending' });
+    draw();
+    return;
+  }
+  if (m.toUid !== me.uid) return;
+  if (m.t === 'ok') {
+    const o = sent.get(m.oid);
+    if (!o) return;
+    o.res[m.fromId] = 'ok';
+
+    post({ t: 'data', oid: m.oid, toUid: m.uid, files: o.files, text: o.text });
+
+    if (peer && !peer.destroyed && o.files && o.files.length) {
+      try {
+        const conn = peer.connect('dak-' + m.uid, { reliable: true });
+        conn.on('open', async () => {
+          const filesData = await Promise.all(o.files.map(async f => ({
+            name: f.name,
+            size: f.size,
+            buffer: f.buffer || ((f.blob instanceof Blob) ? await f.blob.arrayBuffer() : f.blob)
+          })));
+          conn.send({
+            t: 'data',
+            oid: m.oid,
+            toUid: m.uid,
+            files: filesData,
+            text: o.text,
+            uid: me.uid
+          });
+        });
+      } catch (err) {
+        console.warn('WebRTC send error:', err);
+      }
+    }
+    drawPanel();
+  }
+  if (m.t === 'no') {
+    const o = sent.get(m.oid);
+    if (o) { o.res[m.fromId] = 'no'; drawPanel(); }
+  }
+  if (m.t === 'data') {
+    const it = inbox.find(i => i.oid === m.oid);
+    if (!it) return;
+    it.status = 'received';
+    it.text = m.text;
+    it.urls = (m.files || []).map(f => {
+      let blob;
+      if (f.buffer) blob = new Blob([f.buffer]);
+      else if (f.blob instanceof Blob) blob = f.blob;
+      else if (f.blob instanceof ArrayBuffer) blob = new Blob([f.blob]);
+      else blob = new Blob([f.blob || f]);
+      return { name: f.name, url: URL.createObjectURL(blob), size: f.size };
+    });
     draw();
   }
 }
-setInterval(()=>{beat();const n=Date.now();for(const [k,p] of peers)if(n-p.seen>6500)peers.delete(k);drawIfChanged()},2000);
-addEventListener('beforeunload',()=>{try{post({t:'bye'})}catch(e){}});
-const sig=()=>me.id+'|'+others().map(p=>p.id).join(',');
-function drawIfChanged(){if(sig()!==lastSig)draw()}
 
-function offer(kind,payload,label,meta){
-  const to=tab==='group'?'all':[...targets];
-  const ids=to==='all'?others().map(p=>p.id):to,res={};ids.forEach(i=>res[i]='wait');
-  const oid=me.uid+Date.now();
-  sent.set(oid,{...payload,label,kind,res});log.unshift(oid);if(log.length>5)log.pop();
-  post({t:'offer',oid,from:{id:me.id},to,kind,meta});
+setInterval(() => {
+  beat();
+  const n = Date.now();
+  for (const [k, p] of peers) if (n - p.seen > 6500) peers.delete(k);
+  drawIfChanged();
+}, 2000);
+
+addEventListener('beforeunload', () => { try { post({ t: 'bye' }) } catch(e){} });
+const sig = () => me.id + '|' + others().map(p => p.id).join(',');
+function drawIfChanged() { if (sig() !== lastSig) draw() }
+
+function offer(kind, payload, label, meta) {
+  const to = tab === 'group' ? 'all' : [...targets];
+  const ids = to === 'all' ? others().map(p => p.id) : to, res = {};
+  ids.forEach(i => res[i] = 'wait');
+  const oid = me.uid + Date.now();
+  sent.set(oid, { ...payload, label, kind, res });
+  log.unshift(oid);
+  if (log.length > 5) log.pop();
+  post({ t: 'offer', oid, from: { id: me.id }, to, kind, meta });
 }
-const canSend=()=>me.id&&(tab==='group'?peers.size>0:targets.size>0);
+const canSend = () => me.id && (tab === 'group' ? peers.size > 0 : targets.size > 0);
 
-function draw(){
-  lastSig=sig();
-  const big=$('#myid'),v=me.id||'–';
-  if(big.textContent!=v){big.textContent=v;big.classList.remove('pop');void big.offsetWidth;big.classList.add('pop')}
-  $('#seats').innerHTML=[me.id,...others().map(p=>p.id)].filter(Boolean).sort((a,b)=>a-b).map(n=>`<span class="seat ${n===me.id?'you':''}">${n}</span>`).join('');
-  const pend=inbox.filter(i=>i.status==='pending').length;
-  const T=[['send','Send','send'],['receive','Receive','inbox'],['group','Group','group'],['text','Text','text']];
-  $('#tabs').innerHTML=T.map(([k,l,i])=>`<button role="tab" aria-selected="${tab===k}" data-tab="${k}" aria-label="${l}">${svg(i)}<span>${l}</span>${k==='receive'&&pend?`<i>${pend}</i>`:''}</button>`).join('');
+function draw() {
+  lastSig = sig();
+  const big = $('#myid'), v = me.id || '–';
+  if (big.textContent != v) {
+    big.textContent = v;
+    big.classList.remove('pop');
+    void big.offsetWidth;
+    big.classList.add('pop');
+  }
+  $('#seats').innerHTML = [me.id, ...others().map(p => p.id)].filter(Boolean).sort((a,b) => a - b).map(n => `<span class="seat ${n === me.id ? 'you' : ''}">${n}</span>`).join('');
+  const pend = inbox.filter(i => i.status === 'pending').length;
+  const T = [['send','Send','send'],['receive','Receive','inbox'],['group','Group','group'],['text','Text','text']];
+  $('#tabs').innerHTML = T.map(([k,l,i]) => `<button role="tab" aria-selected="${tab === k}" data-tab="${k}" aria-label="${l}">${svg(i)}<span>${l}</span>${k === 'receive' && pend ? `<i>${pend}</i>` : ''}</button>`).join('');
   drawPanel();
 }
-function toRow(){
-  const o=others();
-  const body=tab==='group'?o.map(p=>`<span class="seat on">${p.id}</span>`).join(''):o.map(p=>`<button class="seat pick" data-chip="${p.id}" aria-pressed="${targets.has(p.id)}" aria-label="Seat ${p.id}">${p.id}</button>`).join('');
-  return `<div class="to"><b>To</b><div class="seatrow">${body||'<span class="dim">–</span>'}</div></div>`;
+
+function toRow() {
+  const o = others();
+  const body = tab === 'group' ? o.map(p => `<span class="seat on">${p.id}</span>`).join('') : o.map(p => `<button class="seat pick" data-chip="${p.id}" aria-pressed="${targets.has(p.id)}" aria-label="Seat ${p.id}">${p.id}</button>`).join('');
+  return `<div class="to"><b>To</b><div class="seatrow">${body || '<span class="dim">–</span>'}</div></div>`;
 }
-function xfers(){
-  return log.length?`<ul class="xf">${log.map(oid=>{const o=sent.get(oid);return `<li>${svg(o.kind==='text'?'text':'send')}<span class="xl">${esc(o.label)}</span><span class="dots">${Object.entries(o.res).map(([id,s])=>`<span class="dot ${s}">${id}</span>`).join('')}</span></li>`}).join('')}</ul>`:'';
+
+function xfers() {
+  return log.length ? `<ul class="xf">${log.map(oid => {
+    const o = sent.get(oid);
+    return `<li>${svg(o.kind === 'text' ? 'text' : 'send')}<span class="xl">${esc(o.label)}</span><span class="dots">${Object.entries(o.res).map(([id,s]) => `<span class="dot ${s}">${id}</span>`).join('')}</span></li>`
+  }).join('')}</ul>` : '';
 }
-function fileRows(arr){return arr.map(f=>`<li><span class="ext">${esc(ext(f.name))}</span><span class="n">${esc(f.webkitRelativePath||f.name)}</span><span class="z">${fmt(f.size)}</span></li>`).join('')}
-function drawPanel(){
-  const el=$('#panel');
-  if(tab==='send'||tab==='group'){
-    el.innerHTML=`<div class="card">${toRow()}
+
+function fileRows(arr) {
+  return arr.map(f => `<li><span class="ext">${esc(ext(f.name))}</span><span class="n">${esc(f.webkitRelativePath || f.name)}</span><span class="z">${fmt(f.size)}</span></li>`).join('');
+}
+
+function drawPanel() {
+  const el = $('#panel');
+  if (tab === 'send' || tab === 'group') {
+    el.innerHTML = `<div class="card">${toRow()}
       <div class="drop" id="dz">
         <div class="row"><label class="btn">Files<input type="file" id="f1" multiple hidden></label><label class="btn">Folder<input type="file" id="f2" webkitdirectory hidden></label></div>
-        ${staged.length?`<ul class="fl">${fileRows(staged)}</ul>`:''}
+        ${staged.length ? `<ul class="fl">${fileRows(staged)}</ul>` : ''}
       </div>
-      <div class="foot"><span class="sum">${staged.length?staged.length+' · '+fmt(staged.reduce((a,f)=>a+f.size,0)):''}</span><button class="go" data-act="sendfiles" ${staged.length&&canSend()?'':'disabled'}>Send</button></div></div>${xfers()}`;
-  }else if(tab==='text'){
-    const n=textVal?textVal.split('\n').length:0;
-    el.innerHTML=`<div class="card">${toRow()}<textarea id="txt" aria-label="Text" spellcheck="false">${esc(textVal)}</textarea>
-      <div class="foot"><span class="sum" id="cnt">${n} lines · ${textVal.length} chars</span><button class="go" data-act="sendtext" ${textVal.trim()&&targets.size&&me.id?'':'disabled'}>Send</button></div></div>${xfers()}`;
-  }else{
-    el.innerHTML=inbox.length?inbox.map(itemHtml).join(''):`<div class="empty">${svg('inbox')}</div>`;
+      <div class="foot"><span class="sum">${staged.length ? staged.length + ' · ' + fmt(staged.reduce((a,f) => a + f.size, 0)) : ''}</span><button class="go" data-act="sendfiles" ${staged.length && canSend() ? '' : 'disabled'}>Send</button></div></div>${xfers()}`;
+  } else if (tab === 'text') {
+    const n = textVal ? textVal.split('\n').length : 0;
+    el.innerHTML = `<div class="card">${toRow()}<textarea id="txt" aria-label="Text" spellcheck="false">${esc(textVal)}</textarea>
+      <div class="foot"><span class="sum" id="cnt">${n} lines · ${textVal.length} chars</span><button class="go" data-act="sendtext" ${textVal.trim() && targets.size && me.id ? '' : 'disabled'}>Send</button></div></div>${xfers()}`;
+  } else {
+    el.innerHTML = inbox.length ? inbox.map(itemHtml).join('') : `<div class="empty">${svg('inbox')}</div>`;
   }
 }
-function itemHtml(i){
-  const av=`<span class="seat sm">${i.from.id}</span>`;
-  if(i.status==='blocked')return `<article class="item blocked">${av}<span>Blocked</span></article>`;
-  const list=i.kind==='text'?`<p class="pv">${esc(i.meta.preview)}…</p>`:`<ul class="fl">${fileRows(i.meta.slice(0,6))}${i.meta.length>6?`<li><span class="n dim">+${i.meta.length-6}</span></li>`:''}</ul>`;
-  if(i.status==='pending')return `<article class="item"><div class="hd">${av}<span>${i.kind==='text'?'Text, '+i.meta.size+' chars':i.meta.length+' file'+(i.meta.length>1?'s':'')}</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
-  if(i.status==='accepting')return `<article class="item"><div class="hd">${av}<span class="dim">…</span></div></article>`;
-  const body=i.kind==='text'?`<pre>${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
-    :`<ul class="fl">${i.urls.map(u=>`<li><span class="ext">${esc(ext(u.name))}</span><span class="n">${esc(u.name)}</span><span class="z">${fmt(u.size)}</span><a href="${u.url}" download="${esc(u.name.split('/').pop())}">Save</a></li>`).join('')}</ul>`;
+
+function itemHtml(i) {
+  const av = `<span class="seat sm">${i.from.id}</span>`;
+  if (i.status === 'blocked') return `<article class="item blocked">${av}<span>Blocked</span></article>`;
+  const list = i.kind === 'text' ? `<p class="pv">${esc(i.meta.preview)}…</p>` : `<ul class="fl">${fileRows(i.meta.slice(0,6))}${i.meta.length > 6 ? `<li><span class="n dim">+${i.meta.length - 6}</span></li>`:''}</ul>`;
+  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>${i.kind === 'text' ? 'Text, ' + i.meta.size + ' chars' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')}</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
+  if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">…</span></div></article>`;
+  const body = i.kind === 'text' ? `<pre>${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
+    : `<ul class="fl">${i.urls.map(u => `<li><span class="ext">${esc(ext(u.name))}</span><span class="n">${esc(u.name)}</span><span class="z">${fmt(u.size)}</span><a href="${u.url}" download="${esc(u.name.split('/').pop())}">Save</a></li>`).join('')}</ul>`;
   return `<article class="item received"><div class="hd">${av}</div>${body}</article>`;
 }
 
-document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-chip],[data-act]');if(!t)return;
-  if(t.dataset.tab){tab=t.dataset.tab;draw();return}
-  if(t.dataset.chip){const n=+t.dataset.chip;targets.has(n)?targets.delete(n):targets.add(n);drawPanel();return}
-  const a=t.dataset.act,i=inbox.find(x=>x.oid===t.dataset.oid);
-  if(a==='sendfiles'){
-    const files=staged.map(f=>({name:f.webkitRelativePath||f.name,size:f.size,blob:f}));
-    offer('file',{files},files.length+' file'+(files.length>1?'s':''),files.map(({name,size})=>({name,size})));
-    staged=[];drawPanel();
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-tab],[data-chip],[data-act]');
+  if (!t) return;
+  if (t.dataset.tab) { tab = t.dataset.tab; draw(); return; }
+  if (t.dataset.chip) { const n = +t.dataset.chip; targets.has(n) ? targets.delete(n) : targets.add(n); drawPanel(); return; }
+  const a = t.dataset.act, i = inbox.find(x => x.oid === t.dataset.oid);
+  if (a === 'sendfiles') {
+    const files = await Promise.all(staged.map(async f => ({
+      name: f.webkitRelativePath || f.name,
+      size: f.size,
+      buffer: await f.arrayBuffer(),
+      blob: f
+    })));
+    offer('file', { files }, files.length + ' file' + (files.length > 1 ? 's' : ''), files.map(({ name, size }) => ({ name, size })));
+    staged = []; drawPanel();
   }
-  if(a==='sendtext'){offer('text',{text:textVal},'Text',{size:textVal.length,preview:textVal.slice(0,80)});textVal='';drawPanel()}
-  if(a==='allow'&&i){i.status='accepting';post({t:'ok',oid:i.oid,toUid:i.uid,fromId:me.id});drawPanel()}
-  if(a==='block'&&i){i.status='blocked';post({t:'no',oid:i.oid,toUid:i.uid,fromId:me.id});draw()}
-  if(a==='copy'&&i)navigator.clipboard.writeText(i.text).then(()=>{t.textContent='Copied'});
+  if (a === 'sendtext') {
+    offer('text', { text: textVal }, 'Text', { size: textVal.length, preview: textVal.slice(0, 80) });
+    textVal = ''; drawPanel();
+  }
+  if (a === 'allow' && i) {
+    i.status = 'accepting';
+    post({ t: 'ok', oid: i.oid, toUid: i.uid, fromId: me.id });
+    drawPanel();
+  }
+  if (a === 'block' && i) {
+    i.status = 'blocked';
+    post({ t: 'no', oid: i.oid, toUid: i.uid, fromId: me.id });
+    draw();
+  }
+  if (a === 'copy' && i) {
+    navigator.clipboard.writeText(i.text).then(() => { t.textContent = 'Copied'; });
+  }
 });
-document.addEventListener('change',e=>{if(e.target.id==='f1'||e.target.id==='f2'){staged=[...e.target.files];drawPanel()}});
-document.addEventListener('input',e=>{
-  if(e.target.id!=='txt')return;
-  textVal=e.target.value;
-  $('#cnt').textContent=(textVal?textVal.split('\n').length:0)+' lines · '+textVal.length+' chars';
-  const b=document.querySelector('[data-act=sendtext]');if(b)b.disabled=!(textVal.trim()&&targets.size&&me.id);
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'f1' || e.target.id === 'f2') {
+    staged = [...e.target.files];
+    drawPanel();
+  }
 });
-const dz=$('#drop');
-dz.addEventListener('dragover',e=>{e.preventDefault();const d=$('#dz');if(d)d.classList.add('over')});
-dz.addEventListener('dragleave',()=>{const d=$('#dz');if(d)d.classList.remove('over')});
-dz.addEventListener('drop',e=>{e.preventDefault();if(tab==='send'||tab==='group'){staged=[...e.dataTransfer.files];drawPanel()}});
-$('#join').onclick=()=>{room=$('#room').value.trim()||'CSE-LAB-302';connect()};
-$('#room').addEventListener('keydown',e=>{if(e.key==='Enter')$('#join').click()});
+
+document.addEventListener('input', e => {
+  if (e.target.id !== 'txt') return;
+  textVal = e.target.value;
+  $('#cnt').textContent = (textVal ? textVal.split('\n').length : 0) + ' lines · ' + textVal.length + ' chars';
+  const b = document.querySelector('[data-act=sendtext]');
+  if (b) b.disabled = !(textVal.trim() && targets.size && me.id);
+});
+
+const dz = $('#drop');
+dz.addEventListener('dragover', e => { e.preventDefault(); const d = $('#dz'); if (d) d.classList.add('over'); });
+dz.addEventListener('dragleave', () => { const d = $('#dz'); if (d) d.classList.remove('over'); });
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  if (tab === 'send' || tab === 'group') {
+    staged = [...e.dataTransfer.files];
+    drawPanel();
+  }
+});
+
+$('#join').onclick = () => {
+  room = $('#room').value.trim() || 'CSE-LAB-302';
+  connect();
+};
+$('#room').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('#join').click();
+});
+
 connect();
 </script>
 </body>
