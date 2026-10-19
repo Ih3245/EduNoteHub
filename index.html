@@ -78,14 +78,43 @@ button{cursor:pointer}
 .go:hover:not(:disabled){background:#BF2F25}
 .go:disabled{background:#E3E5EA;color:#9A9EA9;cursor:not-allowed;box-shadow:none}
 
-/* File list */
-.fl{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;text-align:left;max-height:220px;overflow:auto}
-.fl li{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F5F6F8;border-radius:10px}
-.ext{min-width:40px;height:30px;border-radius:6px;background:var(--ink);color:#fff;font:700 11px var(--f);display:grid;place-items:center;padding:0 4px}
-.fl .n{flex:1;overflow-wrap:anywhere;line-height:1.3;font-weight:600;font-size:13px}
-.fl .z{color:var(--muted);font-size:12px;white-space:nowrap}
-.fl a{color:var(--ok);font-weight:700;text-decoration:none;font-size:13px}
-.fl a:hover{text-decoration:underline}
+/* File list & items */
+.fl{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px;text-align:left;max-height:280px;overflow:auto}
+.fl li{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F5F6F8;border-radius:10px;border:1px solid transparent;transition:background .15s,border-color .15s}
+.fl li:hover{background:#EFF1F5;border-color:var(--line)}
+.ext{min-width:38px;height:28px;border-radius:6px;background:var(--ink);color:#fff;font:700 11px var(--f);display:grid;place-items:center;padding:0 4px}
+
+/* Thumbnails */
+.file-thumb{width:42px;height:42px;border-radius:8px;flex:none;object-fit:cover;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--ink);color:#fff;text-transform:uppercase;cursor:pointer}
+.thumb-img{border:1px solid rgba(0,0,0,.08);transition:transform .15s;background:#EAECF0}
+.thumb-img:hover{transform:scale(1.06)}
+.thumb-pdf{background:#D93A2F;color:#fff}
+.thumb-video{background:#4F46E5;color:#fff}
+.thumb-audio{background:#0284C7;color:#fff}
+.thumb-text{background:#374151;color:#fff}
+.thumb-ext{background:var(--ink);color:#fff}
+
+.file-info-wrap{flex:1;min-width:0;display:flex;flex-direction:column;cursor:pointer}
+.file-info-wrap .n{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.file-info-wrap .z{font-size:11px;color:var(--muted);margin-top:2px}
+
+.file-row-actions{display:flex;align-items:center;gap:6px;flex:none}
+.btn-file-action{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border:1px solid var(--line);background:#fff;text-decoration:none;color:var(--ink);transition:all .15s}
+.btn-file-action:hover{background:#F0F1F4}
+.btn-file-action.view{color:var(--brand);border-color:#FDECEA;background:#FDECEA}
+.btn-file-action.view:hover{background:#FBD5D1}
+.btn-file-action.dl{color:var(--ok);border-color:var(--ok-soft);background:var(--ok-soft)}
+.btn-file-action.dl:hover{background:#C8EAD7}
+.btn-file-action.del{color:var(--bad);background:#fff;padding:5px 8px}
+.btn-file-action.del:hover{background:var(--brand-soft)}
+
+/* Select & Batch Download Bar */
+.select-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F0F2F6;border-radius:10px;margin-top:10px;gap:8px}
+.select-all-box{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;user-select:none}
+.select-all-box input[type="checkbox"], .file-chk{width:18px;height:18px;accent-color:var(--brand);cursor:pointer;margin:0}
+.btn-dl-selected{min-height:36px;padding:0 14px;background:var(--ok);color:#fff;border:0;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-dl-selected:hover:not(:disabled){background:#17714A}
+.btn-dl-selected:disabled{background:#D0D3DC;color:#8E93A0;cursor:not-allowed}
 
 textarea{width:100%;min-height:220px;border:1.5px solid var(--line);border-radius:var(--r);padding:14px;font:14px/1.6 Consolas,'Courier New',monospace;resize:vertical;background:#FAFAFC;transition:border-color .15s}
 textarea:focus{border-color:var(--ink);background:#fff;outline:none}
@@ -118,6 +147,8 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 /* Incoming Notification Modal Popup Window */
 .modal-overlay{position:fixed;inset:0;background:rgba(23,24,28,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:99999;animation:modalFade .2s ease-out}
 .modal-card{background:#fff;border-radius:24px;box-shadow:0 24px 56px rgba(0,0,0,.25);max-width:380px;width:100%;padding:26px 20px;text-align:center;animation:modalScale .25s cubic-bezier(.16,1,.3,1)}
+.modal-card.wide-modal{max-width:520px;text-align:left}
+.modal-card.wide-modal .modal-title, .modal-card.wide-modal .modal-desc, .modal-card.wide-modal .modal-badge{margin-left:auto;margin-right:auto;display:block;text-align:center}
 .modal-badge{width:52px;height:52px;border-radius:50%;background:var(--brand);color:#fff;font:800 22px/52px var(--f);display:inline-grid;place-items:center;margin-bottom:12px;box-shadow:0 8px 20px rgba(217,58,47,.25)}
 .modal-badge.ok{background:var(--ok);box-shadow:0 8px 20px rgba(30,138,89,.25)}
 .modal-title{font-size:19px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em}
@@ -127,6 +158,43 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 .modal-allow{flex:1;min-height:48px;border:0;border-radius:var(--r);background:var(--ok);color:#fff;font-weight:800;font-size:15px;cursor:pointer;transition:background .15s}
 .modal-allow:hover{background:#17714A}
 .modal-block{min-height:48px;padding:0 18px;border:1.5px solid var(--line);border-radius:var(--r);background:#fff;color:var(--bad);font-weight:700;font-size:14px;cursor:pointer}
+
+/* Universal File Preview Modal */
+.preview-modal-overlay{position:fixed;inset:0;background:rgba(15,17,23,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100000;animation:modalFade .2s ease-out}
+.preview-modal-box{background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.35);max-width:880px;width:100%;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:modalScale .25s cubic-bezier(.16,1,.3,1)}
+.preview-modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:#FAFAFC;gap:12px}
+.preview-file-info{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.preview-ext-badge{min-width:44px;height:30px;border-radius:6px;font:800 11px var(--f);display:grid;place-items:center;color:#fff;background:var(--ink);padding:0 6px}
+.preview-ext-badge.image{background:#D93A2F}
+.preview-ext-badge.pdf{background:#B4281F}
+.preview-ext-badge.video{background:#4F46E5}
+.preview-ext-badge.audio{background:#0284C7}
+.preview-ext-badge.text{background:#374151}
+
+.preview-file-text{min-width:0;flex:1}
+.preview-file-name{font-weight:700;font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-file-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.preview-header-actions{display:flex;align-items:center;gap:8px;flex:none}
+.btn-preview-dl{padding:7px 14px;background:var(--ok);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-preview-dl:hover{background:#17714A}
+.btn-preview-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:16px;font-weight:700;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:all .15s}
+.btn-preview-close:hover{background:#F0F1F4;color:var(--ink)}
+
+.preview-modal-body{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;background:#0F1117;position:relative;min-height:280px;max-height:calc(92vh - 75px)}
+.preview-modal-body.light-bg{background:#F5F6F8}
+
+.preview-img{max-width:100%;max-height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+.preview-pdf-wrap{width:100%;height:80vh;display:flex;flex-direction:column}
+.preview-iframe{width:100%;flex:1;border:none;background:#fff}
+.preview-pdf-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center}
+.btn-pdf-external{font-size:13px;font-weight:700;color:var(--brand);text-decoration:none}
+.btn-pdf-external:hover{text-decoration:underline}
+
+.preview-media{max-width:100%;max-height:80vh;border-radius:8px}
+.preview-audio-wrap{padding:40px 24px;width:100%;max-width:440px;text-align:center;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin:24px}
+.preview-audio-icon{font-size:42px;margin-bottom:8px}
+.preview-text-box{width:100%;height:100%;max-height:80vh;overflow:auto;padding:18px;margin:0;font:13px/1.6 Consolas,Courier,monospace;background:#16181F;color:#E6EDF3;white-space:pre-wrap;word-break:break-word}
+.preview-unsupported{padding:40px 20px;text-align:center;color:#fff}
 
 @keyframes modalFade{from{opacity:0}to{opacity:1}}
 @keyframes modalScale{from{transform:scale(.88);opacity:0}to{transform:none;opacity:1}}
@@ -139,6 +207,14 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
   .seg button{min-height:42px;font-size:13px;gap:4px}
   .target-input-wrap{padding:0 10px}
   .go{padding:0 18px;font-size:14px}
+  .preview-modal-box{border-radius:16px;max-height:96vh}
+  .preview-modal-header{padding:12px 14px}
+  .preview-img{max-height:75vh}
+  .preview-pdf-wrap{height:75vh}
+  .select-bar{flex-direction:column;align-items:stretch;gap:8px}
+  .btn-dl-selected{justify-content:center}
+  .file-row-actions{gap:4px}
+  .btn-file-action{padding:5px 7px;font-size:11px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -168,6 +244,9 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 <!-- Modal Container for Instant Notification Window -->
 <div id="modalHost"></div>
 
+<!-- Universal Live File Preview Modal -->
+<div id="previewHost"></div>
+
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -175,6 +254,30 @@ const fmt=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFix
 const P={send:'<path d="M7 3h7l5 5v13H7zM14 3v5h5"/>',group:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M16 5.2a3 3 0 010 5.6M18 14c1.8.7 3 2.4 3 5"/>',text:'<path d="M5 6h14M5 12h14M5 18h9"/>',up:'<path d="M12 16V4m0 0L7 9m5-5l5 5M4 20h16"/>',inbox:'<path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1.5 2.5h5L16 13h5"/>'};
 const svg=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
 const ext=n=>{const m=n.match(/\.([A-Za-z0-9]{1,4})$/);return m?m[1].toLowerCase():'file'};
+
+function getMime(name, explicitType) {
+  if (explicitType && explicitType !== 'application/octet-stream') return explicitType;
+  const e = (name.split('.').pop() || '').toLowerCase();
+  const map = {
+    pdf: 'application/pdf',
+    png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', svg: 'image/svg+xml', bmp: 'image/bmp', ico: 'image/x-icon', avif: 'image/avif',
+    mp4: 'video/mp4', webm: 'video/webm', ogv: 'video/ogg', mov: 'video/quicktime',
+    mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', m4a: 'audio/mp4', aac: 'audio/aac', flac: 'audio/flac',
+    txt: 'text/plain', md: 'text/markdown', json: 'application/json', js: 'text/javascript', ts: 'text/plain', html: 'text/html', css: 'text/css', csv: 'text/csv', py: 'text/plain', c: 'text/plain', cpp: 'text/plain', java: 'text/plain', xml: 'application/xml', log: 'text/plain'
+  };
+  return map[e] || explicitType || 'application/octet-stream';
+}
+
+function getFileTypeCategory(name, type) {
+  const mime = type || getMime(name);
+  const e = (name.split('.').pop() || '').toLowerCase();
+  if (mime.startsWith('image/') || ['jpg','jpeg','png','gif','webp','svg','bmp','ico','avif'].includes(e)) return 'image';
+  if (mime === 'application/pdf' || e === 'pdf') return 'pdf';
+  if (mime.startsWith('video/') || ['mp4','webm','ogv','mov','mkv'].includes(e)) return 'video';
+  if (mime.startsWith('audio/') || ['mp3','wav','ogg','m4a','aac','flac'].includes(e)) return 'audio';
+  if (mime.startsWith('text/') || ['txt','md','json','js','ts','css','html','py','csv','xml','c','cpp','java','log','sql'].includes(e)) return 'text';
+  return 'other';
+}
 
 const me = {
   uid: Math.random().toString(36).slice(2, 10),
@@ -347,6 +450,7 @@ function handle(m) {
           const filesData = await Promise.all(o.files.map(async f => ({
             name: f.name,
             size: f.size,
+            type: f.type || getMime(f.name),
             buffer: f.buffer || ((f.blob instanceof Blob) ? await f.blob.arrayBuffer() : f.blob)
           })));
           conn.send({
@@ -376,12 +480,19 @@ function handle(m) {
     it.status = 'received';
     it.text = m.text;
     it.urls = (m.files || []).map(f => {
+      const mime = f.type || getMime(f.name);
       let blob;
-      if (f.buffer) blob = new Blob([f.buffer]);
-      else if (f.blob instanceof Blob) blob = f.blob;
-      else if (f.blob instanceof ArrayBuffer) blob = new Blob([f.blob]);
-      else blob = new Blob([f.blob || f]);
-      return { name: f.name, url: URL.createObjectURL(blob), size: f.size };
+      if (f.buffer) blob = new Blob([f.buffer], { type: mime });
+      else if (f.blob instanceof Blob) blob = f.blob.slice(0, f.blob.size, mime);
+      else if (f.blob instanceof ArrayBuffer) blob = new Blob([f.blob], { type: mime });
+      else blob = new Blob([f.blob || f], { type: mime });
+      return {
+        name: f.name,
+        size: f.size,
+        type: mime,
+        blob: blob,
+        url: URL.createObjectURL(blob)
+      };
     });
 
     onDataReceived(it);
@@ -401,13 +512,16 @@ function showIncomingNotification(item) {
     previewHtml = `
       <div class="modal-filebox">
         <ul class="fl" style="margin:0;">
-          ${(item.meta || []).slice(0, 4).map(f => `
-            <li>
-              <span class="ext">${esc(ext(f.name))}</span>
-              <span class="n">${esc(f.name)}</span>
-              <span class="z">${fmt(f.size)}</span>
-            </li>
-          `).join('')}
+          ${(item.meta || []).slice(0, 4).map(f => {
+            const cat = getFileTypeCategory(f.name, f.type);
+            return `
+              <li>
+                <span class="ext ${cat === 'pdf' ? 'thumb-pdf' : ''}">${esc(ext(f.name))}</span>
+                <span class="n">${esc(f.name)}</span>
+                <span class="z">${fmt(f.size)}</span>
+              </li>
+            `;
+          }).join('')}
           ${item.meta && item.meta.length > 4 ? `<li><span class="n dim">+${item.meta.length - 4} more</span></li>` : ''}
         </ul>
       </div>
@@ -434,7 +548,7 @@ function showIncomingNotification(item) {
   $('#modalAllow').onclick = () => {
     item.status = 'accepting';
     post({ t: 'ok', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
-    $('#modalActions').innerHTML = `<p style="margin:0;font-size:15px;font-weight:700;color:var(--ok);">Receiving automatically… ⏳</p>`;
+    $('#modalActions').innerHTML = `<p style="margin:0;font-size:15px;font-weight:700;color:var(--ok);">Receiving files… ⏳</p>`;
   };
 
   $('#modalDecline').onclick = () => {
@@ -446,41 +560,248 @@ function showIncomingNotification(item) {
 }
 
 function onDataReceived(item) {
-  // 1. Auto download files!
-  if (item.urls && item.urls.length) {
-    item.urls.forEach((u, idx) => {
-      setTimeout(() => {
-        const a = document.createElement('a');
-        a.href = u.url;
-        a.download = u.name.split('/').pop() || 'download';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }, idx * 220);
-    });
-  }
-
-  // 2. Auto copy text to clipboard if it was text
+  // If text, copy to clipboard
   if (item.text) {
     try { navigator.clipboard.writeText(item.text); } catch (e) {}
   }
 
-  // 3. Update the modal with success feedback
+  // Update modal with received file list (User selects what to download)
   const card = $('#activeModal .modal-card');
   if (card) {
-    card.innerHTML = `
-      <div class="modal-badge ok">✓</div>
-      <h3 class="modal-title">${item.text ? 'Text Received!' : 'Files Saved!'}</h3>
-      <p class="modal-desc">${item.text ? 'Message copied to your clipboard.' : 'Your file(s) have been downloaded automatically.'}</p>
-      <button class="btn" style="width:100%;margin-top:10px;" id="modalDoneBtn">Done</button>
-    `;
-    $('#modalDoneBtn').onclick = closeModal;
-    setTimeout(closeModal, 2200);
+    if (item.text) {
+      card.innerHTML = `
+        <div class="modal-badge ok">✓</div>
+        <h3 class="modal-title">Text Received!</h3>
+        <p class="modal-desc">Message copied to your clipboard automatically.</p>
+        <pre style="max-height:160px;overflow:auto;text-align:left;background:#F5F6F8;padding:12px;border-radius:12px;font:13px/1.6 Consolas,monospace;white-space:pre-wrap;">${esc(item.text)}</pre>
+        <button class="btn" style="width:100%;margin-top:14px;" id="modalDoneBtn">Done</button>
+      `;
+      $('#modalDoneBtn').onclick = closeModal;
+    } else {
+      const fromId = item.fromId || item.from?.id || '?';
+      const fileCount = (item.urls || []).length;
+      card.classList.add('wide-modal');
+      card.innerHTML = `
+        <div class="modal-badge ok">✓</div>
+        <h3 class="modal-title">Transfer Complete!</h3>
+        <p class="modal-desc">Received ${fileCount} file${fileCount > 1 ? 's' : ''} from ID ${fromId}. Preview or select files to download below:</p>
+        ${renderReceivedFileList(item)}
+        <div class="modal-acts" style="margin-top:16px;">
+          <button class="btn" style="flex:1;" id="modalDoneBtn">Done</button>
+        </div>
+      `;
+      $('#modalDoneBtn').onclick = () => {
+        closeModal();
+        draw();
+      };
+      updateSelectCount(item.oid);
+    }
   }
 }
 
 function closeModal() {
   $('#modalHost').innerHTML = '';
+}
+
+function downloadFiles(files) {
+  if (!files || !files.length) return;
+  files.forEach((f, idx) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = f.url;
+      a.download = f.name.split('/').pop() || 'download';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }, idx * 220);
+  });
+}
+
+function updateSelectCount(oid) {
+  const checked = document.querySelectorAll(`.file-chk[data-oid="${oid}"]:checked`);
+  const counts = document.querySelectorAll(`.sel-count[data-oid="${oid}"]`);
+  counts.forEach(c => c.textContent = checked.length);
+  const dlBtns = document.querySelectorAll(`.btn-dl-selected[data-oid="${oid}"]`);
+  dlBtns.forEach(b => {
+    b.disabled = checked.length === 0;
+  });
+}
+
+function renderReceivedFileList(item) {
+  if (!item.urls || !item.urls.length) return '';
+  const rows = item.urls.map((u, idx) => {
+    const cat = getFileTypeCategory(u.name, u.type);
+    let thumbHtml = '';
+    if (cat === 'image') {
+      thumbHtml = `<img src="${u.url}" class="file-thumb thumb-img" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" alt="thumb" title="Click to preview image">`;
+    } else if (cat === 'pdf') {
+      thumbHtml = `<div class="file-thumb thumb-pdf" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" title="Click to view PDF">PDF</div>`;
+    } else if (cat === 'video') {
+      thumbHtml = `<div class="file-thumb thumb-video" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" title="Click to play video">▶</div>`;
+    } else if (cat === 'audio') {
+      thumbHtml = `<div class="file-thumb thumb-audio" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" title="Click to play audio">🎵</div>`;
+    } else if (cat === 'text') {
+      thumbHtml = `<div class="file-thumb thumb-text" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" title="Click to read text">TXT</div>`;
+    } else {
+      thumbHtml = `<div class="file-thumb thumb-ext" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}">${esc(ext(u.name))}</div>`;
+    }
+
+    return `
+      <li>
+        <input type="checkbox" class="file-chk" data-oid="${item.oid}" data-idx="${idx}" checked>
+        ${thumbHtml}
+        <div class="file-info-wrap" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}">
+          <span class="n" title="${esc(u.name)}">${esc(u.name)}</span>
+          <span class="z">${fmt(u.size)} · ${cat.toUpperCase()}</span>
+        </div>
+        <div class="file-row-actions">
+          <button class="btn-file-action view" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" title="Preview file live">👁 View</button>
+          <a class="btn-file-action dl" href="${u.url}" download="${esc(u.name.split('/').pop() || 'download')}" title="Save file">⬇ Save</a>
+        </div>
+      </li>
+    `;
+  }).join('');
+
+  return `
+    <div class="select-bar">
+      <label class="select-all-box">
+        <input type="checkbox" class="chk-select-all" data-oid="${item.oid}" checked>
+        <span>Select All</span>
+      </label>
+      <button class="btn-dl-selected" data-act="download-selected" data-oid="${item.oid}">
+        ⬇ Download Selected (<span class="sel-count" data-oid="${item.oid}">${item.urls.length}</span>)
+      </button>
+    </div>
+    <ul class="fl" style="max-height:280px;margin-top:10px;">
+      ${rows}
+    </ul>
+  `;
+}
+
+function stagedRows(arr) {
+  return arr.map((f, idx) => {
+    const cat = getFileTypeCategory(f.name, f.type);
+    let thumb = '';
+    if (cat === 'image') {
+      try {
+        const u = URL.createObjectURL(f);
+        thumb = `<img src="${u}" class="file-thumb thumb-img" data-act="preview-staged" data-idx="${idx}" alt="thumb" title="Click to preview">`;
+      } catch(e) {
+        thumb = `<div class="file-thumb thumb-ext">${esc(ext(f.name))}</div>`;
+      }
+    } else if (cat === 'pdf') {
+      thumb = `<div class="file-thumb thumb-pdf" data-act="preview-staged" data-idx="${idx}" title="Click to view PDF">PDF</div>`;
+    } else {
+      thumb = `<div class="file-thumb thumb-ext" data-act="preview-staged" data-idx="${idx}">${esc(ext(f.name))}</div>`;
+    }
+
+    return `
+      <li>
+        ${thumb}
+        <div class="file-info-wrap" data-act="preview-staged" data-idx="${idx}">
+          <span class="n" title="${esc(f.webkitRelativePath || f.name)}">${esc(f.webkitRelativePath || f.name)}</span>
+          <span class="z">${fmt(f.size)} · ${cat.toUpperCase()}</span>
+        </div>
+        <div class="file-row-actions">
+          <button class="btn-file-action view" data-act="preview-staged" data-idx="${idx}" title="Preview file">👁 View</button>
+          <button class="btn-file-action del" data-act="remove-staged" data-idx="${idx}" title="Remove file">✕</button>
+        </div>
+      </li>
+    `;
+  }).join('');
+}
+
+async function previewFile(file) {
+  const cat = getFileTypeCategory(file.name, file.type);
+  const host = $('#previewHost');
+  if (!host) return;
+
+  const url = file.url || (file.blob ? URL.createObjectURL(file.blob) : '');
+  const fileName = esc(file.name.split('/').pop() || file.name);
+  const sizeStr = file.size ? fmt(file.size) : '';
+
+  let bodyContent = '';
+  let isLight = false;
+
+  if (cat === 'image') {
+    bodyContent = `<img src="${url}" alt="${fileName}" class="preview-img">`;
+  } else if (cat === 'pdf') {
+    bodyContent = `
+      <div class="preview-pdf-wrap">
+        <iframe src="${url}#toolbar=1" class="preview-iframe" title="${fileName}"></iframe>
+        <div class="preview-pdf-bar">
+          <a href="${url}" target="_blank" rel="noopener" class="btn-pdf-external">↗ Open PDF in full tab</a>
+        </div>
+      </div>
+    `;
+    isLight = true;
+  } else if (cat === 'video') {
+    bodyContent = `<video controls autoplay playsinline src="${url}" class="preview-media"></video>`;
+  } else if (cat === 'audio') {
+    bodyContent = `
+      <div class="preview-audio-wrap">
+        <div class="preview-audio-icon">🎵</div>
+        <div style="font-weight:700;font-size:16px;margin:8px 0 16px;">${fileName}</div>
+        <audio controls autoplay src="${url}" style="width:100%"></audio>
+      </div>
+    `;
+    isLight = true;
+  } else if (cat === 'text') {
+    let textContent = '';
+    try {
+      if (file.blob) {
+        textContent = await file.blob.text();
+      } else if (url) {
+        const res = await fetch(url);
+        textContent = await res.text();
+      }
+    } catch (e) {
+      textContent = 'Unable to load preview: ' + e.message;
+    }
+    bodyContent = `<pre class="preview-text-box"><code>${esc(textContent)}</code></pre>`;
+  } else {
+    bodyContent = `
+      <div class="preview-unsupported">
+        <div style="font-size:48px;margin-bottom:12px;">📁</div>
+        <h3 style="margin:0 0 8px;">${fileName}</h3>
+        <p style="color:#A0A4B0;margin:0 0 20px;">${sizeStr ? sizeStr + ' · ' : ''}Preview not available for this format</p>
+        ${url ? `<a href="${url}" download="${fileName}" class="btn" style="display:inline-flex;">Download File</a>` : ''}
+      </div>
+    `;
+  }
+
+  host.innerHTML = `
+    <div class="preview-modal-overlay" id="activePreviewOverlay">
+      <div class="preview-modal-box">
+        <div class="preview-modal-header">
+          <div class="preview-file-info">
+            <span class="preview-ext-badge ${cat}">${cat.toUpperCase()}</span>
+            <div class="preview-file-text">
+              <div class="preview-file-name" title="${fileName}">${fileName}</div>
+              <div class="preview-file-meta">${sizeStr ? sizeStr + ' · ' : ''}${cat.toUpperCase()}</div>
+            </div>
+          </div>
+          <div class="preview-header-actions">
+            ${url ? `<a class="btn-preview-dl" href="${url}" download="${fileName}" title="Download file">⬇ Download</a>` : ''}
+            <button class="btn-preview-close" id="closePreviewBtn" title="Close preview">✕</button>
+          </div>
+        </div>
+        <div class="preview-modal-body ${isLight ? 'light-bg' : ''}">
+          ${bodyContent}
+        </div>
+      </div>
+    </div>
+  `;
+
+  $('#closePreviewBtn').onclick = closePreview;
+  $('#activePreviewOverlay').onclick = e => {
+    if (e.target.id === 'activePreviewOverlay') closePreview();
+  };
+}
+
+function closePreview() {
+  const host = $('#previewHost');
+  if (host) host.innerHTML = '';
 }
 
 setInterval(() => {
@@ -552,7 +873,7 @@ function drawPanel() {
             <label class="btn">Files<input type="file" id="f1" multiple hidden></label>
             <label class="btn">Folder<input type="file" id="f2" webkitdirectory hidden></label>
           </div>
-          ${staged.length ? `<ul class="fl">${fileRows(staged)}</ul>` : ''}
+          ${staged.length ? `<ul class="fl">${stagedRows(staged)}</ul>` : ''}
         </div>
         <div class="foot">
           <span class="sum">${staged.length ? staged.length + ' file(s) · ' + fmt(staged.reduce((a,f) => a + f.size, 0)) : ''}</span>
@@ -596,11 +917,11 @@ function itemHtml(i) {
   const fromId = i.fromId || i.from?.id || '?';
   const av = `<span class="ext" style="background:var(--ok);">${fromId}</span>`;
   if (i.status === 'blocked') return `<article class="item blocked">${av}<span>Blocked from ID ${fromId}</span></article>`;
-  const list = i.kind === 'text' ? `<p class="pv">${esc(i.meta.preview)}…</p>` : `<ul class="fl">${fileRows(i.meta.slice(0,6))}${i.meta.length > 6 ? `<li><span class="n dim">+${i.meta.length - 6}</span></li>`:''}</ul>`;
+  const list = i.kind === 'text' ? `<p class="pv">${esc(i.meta.preview)}…</p>` : `<ul class="fl">${(i.meta || []).slice(0,6).map(f => `<li><span class="ext">${esc(ext(f.name))}</span><span class="n">${esc(f.name)}</span><span class="z">${fmt(f.size)}</span></li>`).join('')}</ul>`;
   if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>Incoming from ID ${fromId} (${i.kind === 'text' ? 'Text' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')})</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
   if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">Receiving from ID ${fromId}…</span></div></article>`;
-  const body = i.kind === 'text' ? `<pre>${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
-    : `<ul class="fl">${i.urls.map(u => `<li><span class="ext">${esc(ext(u.name))}</span><span class="n">${esc(u.name)}</span><span class="z">${fmt(u.size)}</span><a href="${u.url}" download="${esc(u.name.split('/').pop())}">Save</a></li>`).join('')}</ul>`;
+  const body = i.kind === 'text' ? `<pre style="white-space:pre-wrap;font:13px/1.6 Consolas,monospace;background:#F5F6F8;padding:12px;border-radius:10px;max-height:240px;overflow:auto;">${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
+    : renderReceivedFileList(i);
   return `<article class="item received"><div class="hd">${av}<span>Received from ID ${fromId}</span></div>${body}</article>`;
 }
 
@@ -609,6 +930,55 @@ document.addEventListener('click', async e => {
   if (!t) return;
   if (t.dataset.tab) { tab = t.dataset.tab; draw(); return; }
   const a = t.dataset.act, i = inbox.find(x => x.oid === t.dataset.oid);
+
+  if (a === 'download-selected') {
+    const oid = t.dataset.oid;
+    const item = inbox.find(x => x.oid === oid);
+    if (!item || !item.urls) return;
+    const checkedBoxes = document.querySelectorAll(`.file-chk[data-oid="${oid}"]:checked`);
+    if (!checkedBoxes.length) {
+      alert('Please select at least one file to download.');
+      return;
+    }
+    const selectedFiles = [...checkedBoxes].map(cb => item.urls[parseInt(cb.dataset.idx)]).filter(Boolean);
+    downloadFiles(selectedFiles);
+    return;
+  }
+
+  if (a === 'preview-received') {
+    const oid = t.dataset.oid;
+    const idx = parseInt(t.dataset.idx);
+    const item = inbox.find(x => x.oid === oid);
+    if (item && item.urls && item.urls[idx]) {
+      previewFile(item.urls[idx]);
+    }
+    return;
+  }
+
+  if (a === 'preview-staged') {
+    const idx = parseInt(t.dataset.idx);
+    const f = staged[idx];
+    if (f) {
+      previewFile({
+        name: f.name,
+        size: f.size,
+        type: f.type || getMime(f.name),
+        blob: f,
+        url: URL.createObjectURL(f)
+      });
+    }
+    return;
+  }
+
+  if (a === 'remove-staged') {
+    const idx = parseInt(t.dataset.idx);
+    if (!isNaN(idx) && staged[idx]) {
+      staged.splice(idx, 1);
+      drawPanel();
+    }
+    return;
+  }
+
   if (a === 'sendfiles') {
     if (!targetId && tab !== 'group') {
       const inp = $('#targetIdInput');
@@ -619,12 +989,15 @@ document.addEventListener('click', async e => {
     const files = await Promise.all(staged.map(async f => ({
       name: f.webkitRelativePath || f.name,
       size: f.size,
+      type: f.type || getMime(f.name),
       buffer: await f.arrayBuffer(),
       blob: f
     })));
-    offer('file', { files }, files.length + ' file' + (files.length > 1 ? 's' : ''), files.map(({ name, size }) => ({ name, size })), to);
+    offer('file', { files }, files.length + ' file' + (files.length > 1 ? 's' : ''), files.map(({ name, size, type }) => ({ name, size, type: type || getMime(name) })), to);
     staged = []; drawPanel();
+    return;
   }
+
   if (a === 'sendtext') {
     if (!targetId) {
       const inp = $('#targetIdInput');
@@ -633,19 +1006,48 @@ document.addEventListener('click', async e => {
     }
     offer('text', { text: textVal }, 'Text', { size: textVal.length, preview: textVal.slice(0, 80) }, [targetId]);
     textVal = ''; drawPanel();
+    return;
   }
+
   if (a === 'allow' && i) {
     i.status = 'accepting';
     post({ t: 'ok', oid: i.oid, toUid: i.uid, toId: i.from.id, fromId: me.id });
     drawPanel();
+    return;
   }
+
   if (a === 'block' && i) {
     i.status = 'blocked';
     post({ t: 'no', oid: i.oid, toUid: i.uid, toId: i.from.id, fromId: me.id });
     draw();
+    return;
   }
+
   if (a === 'copy' && i) {
     navigator.clipboard.writeText(i.text).then(() => { t.textContent = 'Copied'; });
+    return;
+  }
+});
+
+document.addEventListener('change', e => {
+  if (e.target.classList.contains('chk-select-all')) {
+    const oid = e.target.dataset.oid;
+    const isChecked = e.target.checked;
+    const chks = document.querySelectorAll(`.file-chk[data-oid="${oid}"]`);
+    chks.forEach(c => c.checked = isChecked);
+    updateSelectCount(oid);
+  }
+  if (e.target.classList.contains('file-chk')) {
+    const oid = e.target.dataset.oid;
+    const all = document.querySelectorAll(`.file-chk[data-oid="${oid}"]`);
+    const checked = document.querySelectorAll(`.file-chk[data-oid="${oid}"]:checked`);
+    const selectAll = document.querySelector(`.chk-select-all[data-oid="${oid}"]`);
+    if (selectAll) selectAll.checked = (all.length === checked.length && all.length > 0);
+    updateSelectCount(oid);
+  }
+  if (e.target.id === 'f1' || e.target.id === 'f2') {
+    staged = [...e.target.files];
+    drawPanel();
   }
 });
 
@@ -662,19 +1064,16 @@ document.addEventListener('input', e => {
 });
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closePreview();
+    closeModal();
+  }
   if (e.key === 'Enter' && e.target.id === 'targetIdInput') {
     e.preventDefault();
     const sendBtn = document.querySelector('[data-act="sendfiles"], [data-act="sendtext"]');
     if (sendBtn && !sendBtn.disabled) {
       sendBtn.click();
     }
-  }
-});
-
-document.addEventListener('change', e => {
-  if (e.target.id === 'f1' || e.target.id === 'f2') {
-    staged = [...e.target.files];
-    drawPanel();
   }
 });
 
