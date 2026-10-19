@@ -26,12 +26,10 @@ button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .ic{width:20px;height:20px;flex:none}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);padding:var(--s4) var(--s6);max-width:1120px;margin:0 auto}
+.bar{display:flex;align-items:center;justify-content:flex-start;gap:var(--s4);padding:var(--s4) var(--s6);max-width:1120px;margin:0 auto}
 .status-indicator{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
 .status-dot{width:9px;height:9px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
 .status-dot.online{background:var(--ok);box-shadow:0 0 8px rgba(30,138,89,.5)}
-.header-badge{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;background:#fff;padding:6px 14px;border-radius:var(--r);border:1px solid var(--line)}
-.header-badge b{color:var(--brand);font-size:17px}
 .shell{display:grid;grid-template-columns:64px 1fr;gap:var(--s5);max-width:1120px;margin:0 auto;padding:var(--s2) var(--s6) var(--s7);align-items:start}
 .card{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:var(--s5)}
 .stamp{background:var(--brand);color:#fff;border-radius:var(--r);height:44px;display:grid;place-items:center;margin-bottom:4px;user-select:none}
@@ -51,13 +49,6 @@ aside .card{background:none;box-shadow:none;padding:0}
 .seg button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
 .seg i{font-style:normal;min-width:22px;height:22px;border-radius:11px;background:var(--brand);color:#fff;font-size:13px;display:inline-grid;place-items:center;padding:0 6px}
 
-/* Clean Simple Send to ID Input */
-.to-simple{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s5)}
-.to-simple label{font-weight:800;font-size:15px;color:var(--ink);white-space:nowrap}
-.to-simple input{width:160px;min-height:46px;border:1.5px solid var(--line);border-radius:var(--r);padding:0 var(--s4);font-size:16px;font-weight:800;text-align:left;background:#fff;transition:border-color .15s,box-shadow .15s}
-.to-simple input:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 3px rgba(23,24,28,.08)}
-.to-simple input::placeholder{font-weight:500;font-size:14px;color:#9A9EA9}
-
 .dim{color:var(--muted)}
 .drop{border:2px dashed #CBCFD8;border-radius:var(--rl);padding:var(--s6) var(--s5);text-align:center;transition:background .15s,border-color .15s}
 .drop.over{background:var(--brand-soft);border-color:var(--brand)}
@@ -65,15 +56,21 @@ aside .card{background:none;box-shadow:none;padding:0}
 .drop .row{display:flex;justify-content:center;gap:var(--s3);flex-wrap:wrap}
 .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--ink);border-radius:var(--r);background:#fff;padding:0 var(--s5);font-weight:700;cursor:pointer;transition:background .15s}
 .btn:hover{background:#F0F1F4}
-.go{min-height:44px;padding:0 var(--s5);display:inline-flex;align-items:center;gap:var(--s2);border:0;border-radius:var(--r);background:var(--brand);color:#fff;font-weight:700;transition:background .15s}
-.go .ic{width:18px;height:18px}
-.foot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s2);margin-top:var(--s4)}
-.foot .go{order:0}
+
+/* Clean Action Footer with inline Target ID input */
+.foot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s3);margin-top:var(--s5)}
 .foot .sum:empty{display:none}
 .sum{color:var(--muted);font-size:14px}
-.shell>*{min-width:0}
+.send-bar{display:flex;align-items:center;justify-content:center;gap:var(--s2);width:100%}
+.id-inp{width:110px;min-height:46px;border:1.5px solid var(--line);border-radius:var(--r);padding:0 var(--s3);font-size:16px;font-weight:800;text-align:center;background:#fff;transition:border-color .15s,box-shadow .15s}
+.id-inp:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 3px rgba(23,24,28,.08)}
+.id-inp::placeholder{font-size:13px;font-weight:600;color:#9A9EA9}
+.go{min-height:46px;padding:0 var(--s5);display:inline-flex;align-items:center;gap:var(--s2);border:0;border-radius:var(--r);background:var(--brand);color:#fff;font-weight:700;transition:background .15s}
+.go .ic{width:18px;height:18px}
 .go:hover:not(:disabled){background:#BF2F25}
 .go:disabled{background:#E3E5EA;color:#9A9EA9;cursor:not-allowed}
+
+.shell>*{min-width:0}
 .fl{list-style:none;margin:var(--s4) 0 0;padding:0;display:grid;gap:var(--s2);text-align:left;max-height:240px;overflow:auto}
 .fl li{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3);background:var(--bg);border-radius:var(--r)}
 .ext{min-width:44px;height:32px;border-radius:6px;background:var(--ink);color:#fff;font:700 12px var(--f);display:grid;place-items:center;padding:0 6px}
@@ -106,8 +103,7 @@ textarea:focus{border-color:var(--ink);outline:none}
 @media (max-width:860px){
   .bar{padding:var(--s3) var(--s4)}
   .shell{grid-template-columns:52px 1fr;padding:var(--s2) var(--s4) var(--s6);gap:var(--s3)}
-  .to-simple{flex-direction:column;align-items:flex-start;gap:var(--s2)}
-  .to-simple input{width:100%}
+  .send-bar{flex-direction:row}
   .card{padding:var(--s4)}
   .drop{padding:var(--s5) var(--s3)}
   textarea{min-height:180px}
@@ -123,10 +119,6 @@ textarea:focus{border-color:var(--ink);outline:none}
   <div class="status-indicator" id="netStatus" title="Network status">
     <span class="status-dot"></span>
     <span class="status-text">Connecting...</span>
-  </div>
-  <div class="header-badge">
-    <span>Your ID:</span>
-    <b id="headerMyId">–</b>
   </div>
 </header>
 <div class="shell">
@@ -406,8 +398,6 @@ function draw() {
     void big.offsetWidth;
     big.classList.add('pop');
   }
-  const hId = $('#headerMyId');
-  if (hId) hId.textContent = v;
 
   const onlineOthers = others().filter(p => p.id !== me.id);
   const seatsEl = $('#seats');
@@ -441,23 +431,19 @@ function drawPanel() {
   if (tab === 'send' || tab === 'group') {
     el.innerHTML = `
       <div class="card">
-        ${tab !== 'group' ? `
-          <div class="to-simple">
-            <label for="targetIdInput">Send to ID:</label>
-            <input type="number" id="targetIdInput" min="1" max="999" placeholder="Enter recipient ID (e.g. 2)" value="${targetId || ''}" autocomplete="off">
-          </div>
-        ` : `
-          <div class="to-simple">
-            <label>Sending to:</label> <span class="dim">All online devices</span>
-          </div>
-        `}
         <div class="drop" id="dz">
-          <div class="row"><label class="btn">Files<input type="file" id="f1" multiple hidden></label><label class="btn">Folder<input type="file" id="f2" webkitdirectory hidden></label></div>
+          <div class="row">
+            <label class="btn">Files<input type="file" id="f1" multiple hidden></label>
+            <label class="btn">Folder<input type="file" id="f2" webkitdirectory hidden></label>
+          </div>
           ${staged.length ? `<ul class="fl">${fileRows(staged)}</ul>` : ''}
         </div>
         <div class="foot">
           <span class="sum">${staged.length ? staged.length + ' · ' + fmt(staged.reduce((a,f) => a + f.size, 0)) : ''}</span>
-          <button class="go" data-act="sendfiles" ${canSend() ? '' : 'disabled'}>Send</button>
+          <div class="send-bar">
+            ${tab !== 'group' ? `<input type="number" class="id-inp" id="targetIdInput" min="1" max="999" placeholder="Target ID" value="${targetId || ''}" autocomplete="off" title="Enter recipient ID and press Enter or Send">` : ''}
+            <button class="go" data-act="sendfiles" ${canSend() ? '' : 'disabled'}>Send</button>
+          </div>
         </div>
       </div>
       ${xfers()}
@@ -466,14 +452,13 @@ function drawPanel() {
     const n = textVal ? textVal.split('\n').length : 0;
     el.innerHTML = `
       <div class="card">
-        <div class="to-simple">
-          <label for="targetIdInput">Send to ID:</label>
-          <input type="number" id="targetIdInput" min="1" max="999" placeholder="Enter recipient ID (e.g. 2)" value="${targetId || ''}" autocomplete="off">
-        </div>
         <textarea id="txt" aria-label="Text" placeholder="Type your text message here..." spellcheck="false">${esc(textVal)}</textarea>
         <div class="foot">
           <span class="sum" id="cnt">${n} lines · ${textVal.length} chars</span>
-          <button class="go" data-act="sendtext" ${canSend() ? '' : 'disabled'}>Send</button>
+          <div class="send-bar">
+            <input type="number" class="id-inp" id="targetIdInput" min="1" max="999" placeholder="Target ID" value="${targetId || ''}" autocomplete="off" title="Enter recipient ID and press Enter or Send">
+            <button class="go" data-act="sendtext" ${canSend() ? '' : 'disabled'}>Send</button>
+          </div>
         </div>
       </div>
       ${xfers()}
@@ -502,7 +487,8 @@ document.addEventListener('click', async e => {
   const a = t.dataset.act, i = inbox.find(x => x.oid === t.dataset.oid);
   if (a === 'sendfiles') {
     if (!targetId && tab !== 'group') {
-      alert('Please enter recipient ID');
+      const inp = $('#targetIdInput');
+      if (inp) inp.focus();
       return;
     }
     const to = tab === 'group' ? 'all' : [targetId];
@@ -517,7 +503,8 @@ document.addEventListener('click', async e => {
   }
   if (a === 'sendtext') {
     if (!targetId) {
-      alert('Please enter recipient ID');
+      const inp = $('#targetIdInput');
+      if (inp) inp.focus();
       return;
     }
     offer('text', { text: textVal }, 'Text', { size: textVal.length, preview: textVal.slice(0, 80) }, [targetId]);
@@ -547,6 +534,16 @@ document.addEventListener('input', e => {
     textVal = e.target.value;
     $('#cnt').textContent = (textVal ? textVal.split('\n').length : 0) + ' lines · ' + textVal.length + ' chars';
     updateSendButton();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'targetIdInput') {
+    e.preventDefault();
+    const sendBtn = document.querySelector('[data-act="sendfiles"], [data-act="sendtext"]');
+    if (sendBtn && !sendBtn.disabled) {
+      sendBtn.click();
+    }
   }
 });
 
