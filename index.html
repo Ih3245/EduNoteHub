@@ -27,8 +27,8 @@ button{cursor:pointer}
 :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .ic{width:20px;height:20px;flex:none}
 
-/* Main Centered App Wrapper */
-.app-wrap{width:100%;max-width:560px;margin:16px auto 40px;padding:0 16px;display:flex;flex-direction:column;gap:12px}
+/* Responsive Desktop & Mobile App Wrapper */
+.app-wrap{width:94%;max-width:1380px;margin:12px auto 40px;padding:0 24px;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 54px)}
 
 /* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 8px;gap:8px}
@@ -68,9 +68,10 @@ button{cursor:pointer}
 .card{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:22px;width:100%;display:flex;flex-direction:column;gap:16px}
 
 /* Dropzone Area */
-.drop{border:2px dashed #CBCFD8;border-radius:var(--r);padding:32px 16px;text-align:center;transition:background .15s,border-color .15s;background:#FAFAFC}
+.drop{border:2.5px dashed #CBCFD8;border-radius:var(--rl);padding:44px 20px;text-align:center;transition:background .15s,border-color .15s;background:#FAFAFC}
 .drop.over{background:var(--brand-soft);border-color:var(--brand)}
-.drop .ic{width:42px;height:42px;color:var(--brand);margin-bottom:10px}
+.drop .ic{width:52px;height:52px;color:var(--brand);margin-bottom:12px}
+.drop-text{font-size:15px;font-weight:600;color:var(--muted);margin:0 0 16px;text-align:center}
 .drop .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 
 .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--ink);border-radius:var(--r);background:#fff;padding:0 20px;font-weight:700;font-size:14px;cursor:pointer;transition:background .15s,transform .1s}
@@ -216,14 +217,33 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 @keyframes modalFade{from{opacity:0}to{opacity:1}}
 @keyframes modalScale{from{transform:scale(.88);opacity:0}to{transform:none;opacity:1}}
 
-/* Small Screens / Mobile Adjustments */
-@media (max-width:540px){
-  .app-wrap{margin:10px auto 30px;padding:0 12px}
+/* Desktop Enhancements (Full-screen PC experience) */
+@media (min-width: 769px){
+  .card{padding:36px 44px;border-radius:24px;min-height:520px;justify-content:space-between}
+  .drop{padding:64px 24px;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .drop .ic{width:64px;height:64px;margin-bottom:16px}
+  .drop-text{font-size:18px;margin:0 0 20px}
+  .btn{min-height:48px;padding:0 30px;font-size:15px}
+  .seg{max-width:620px;margin:0 auto;width:100%}
+  .foot{flex-direction:row;align-items:center;justify-content:space-between;gap:20px;padding-top:16px;border-top:1px solid var(--line)}
+  .foot .sum{text-align:left;font-size:14px}
+  .send-bar{max-width:460px}
+  textarea{min-height:420px;font-size:16px;line-height:1.7;padding:20px}
+  .fl{grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));max-height:400px}
+}
+
+/* Mobile Adjustments (Keep clean and compact on phones) */
+@media (max-width: 768px){
+  .app-wrap{width:100%;max-width:100%;margin:8px auto 24px;padding:0 12px;gap:10px}
   .card{padding:16px;border-radius:16px}
-  .drop{padding:24px 10px}
+  .drop{padding:24px 10px;min-height:auto}
+  .drop-text{font-size:13px;margin:0 0 12px}
   .seg button{min-height:42px;font-size:13px;gap:4px}
   .target-input-wrap{padding:0 10px}
   .go{padding:0 18px;font-size:14px}
+  .foot{flex-direction:column;gap:12px;border-top:none;padding-top:0}
+  .send-bar{width:100%}
+  .fl{grid-template-columns:1fr}
   .preview-modal-box{border-radius:16px;max-height:96vh}
   .preview-modal-header{padding:12px 14px}
   .preview-img{max-height:75vh}
@@ -944,6 +964,7 @@ function drawPanel() {
       <div class="card">
         <div class="drop" id="dz">
           ${svg('send')}
+          <p class="drop-text">Drag & drop files or folders here, or click to browse</p>
           <div class="row">
             <label class="btn">Files<input type="file" id="f1" multiple hidden></label>
             <label class="btn">Folder<input type="file" id="f2" webkitdirectory hidden></label>
