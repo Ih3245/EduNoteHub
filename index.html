@@ -13,7 +13,10 @@
 :root{
   color-scheme:light;
   --bg:#F5F6F8;--card:#fff;--ink:#17181C;--muted:#6A6E79;--line:#E3E5EA;
-  --brand:#D93A2F;--brand-soft:#FDECEA;--sun:#FFC93C;--ok:#1E8A59;--ok-soft:#E3F4EB;--bad:#B4281F;
+  --orange:#FF6600;--orange-hover:#E65500;--orange-soft:#FFF3EB;
+  --brand:var(--orange);--brand-hover:var(--orange-hover);--brand-soft:var(--orange-soft);
+  --sun:#FFA726;--ok:var(--orange);--ok-hover:var(--orange-hover);--ok-soft:var(--orange-soft);
+  --bad:#B4281F;--bad-soft:#FDECEA;--net-green:#1E8A59;
   --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:28px;
   --r:12px;--rl:20px;
   --sh:0 2px 4px rgba(23,24,28,.04),0 12px 32px -8px rgba(23,24,28,.12);
@@ -24,7 +27,7 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:500 15px
 body{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);min-height:100vh;display:flex;flex-direction:column;align-items:center}
 button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .ic{width:20px;height:20px;flex:none}
 
 /* Responsive Desktop & Mobile App Wrapper */
@@ -32,26 +35,26 @@ button{cursor:pointer}
 
 /* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 8px;gap:8px}
-.status-indicator{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted);flex:none}
-.status-dot{width:9px;height:9px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
-.status-dot.online{background:var(--ok);box-shadow:0 0 8px rgba(30,138,89,.5)}
+.status-indicator{display:flex;align-items:center;flex:none}
+.status-dot{width:10px;height:10px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
+.status-dot.online{background:var(--net-green);box-shadow:0 0 8px rgba(30,138,89,.6)}
 
 .header-right-group{display:flex;align-items:center;gap:8px;flex:none}
 
 /* Universal Allow Toggle */
 .auto-allow-toggle{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--line);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;user-select:none;transition:border-color .15s,background .15s,color .15s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .auto-allow-toggle:hover{border-color:#CBCFD8}
-.auto-allow-toggle:has(input:checked){background:var(--ok-soft);border-color:rgba(30,138,89,.35);color:var(--ok)}
+.auto-allow-toggle:has(input:checked){background:var(--orange-soft);border-color:rgba(255,102,0,.35);color:var(--orange)}
 .auto-allow-toggle input{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
 .toggle-slider{width:28px;height:16px;background:#CBCFD8;border-radius:99px;position:relative;transition:background .2s;flex:none}
 .toggle-slider::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.auto-allow-toggle input:checked + .toggle-slider{background:var(--ok)}
+.auto-allow-toggle input:checked + .toggle-slider{background:var(--orange)}
 .auto-allow-toggle input:checked + .toggle-slider::after{transform:translateX(12px)}
 .auto-allow-text{font-size:12px;white-space:nowrap}
 
 .my-id-badge{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.04);flex:none}
 .my-id-badge span{color:var(--muted)}
-.my-id-badge b{color:var(--brand);font-size:16px;font-weight:800}
+.my-id-badge b{color:var(--orange);font-size:16px;font-weight:800}
 
 /* Toast Notifications */
 .app-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:transform .25s cubic-bezier(.16,1,.3,1),opacity .2s;z-index:100001;white-space:nowrap;display:flex;align-items:center;gap:8px}
@@ -62,15 +65,15 @@ button{cursor:pointer}
 .seg button{min-height:46px;display:flex;align-items:center;justify-content:center;gap:6px;border:0;background:none;border-radius:10px;font-weight:700;font-size:14px;color:var(--muted);transition:background .15s,color .15s,transform .1s}
 .seg button:active{transform:scale(.98)}
 .seg button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.seg i{font-style:normal;min-width:20px;height:20px;border-radius:10px;background:var(--brand);color:#fff;font-size:11px;display:inline-grid;place-items:center;padding:0 5px}
+.seg i{font-style:normal;min-width:20px;height:20px;border-radius:10px;background:var(--orange);color:#fff;font-size:11px;display:inline-grid;place-items:center;padding:0 5px}
 
 /* Main Card */
 .card{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:22px;width:100%;display:flex;flex-direction:column;gap:16px}
 
 /* Dropzone Area */
 .drop{border:2.5px dashed #CBCFD8;border-radius:var(--rl);padding:44px 20px;text-align:center;transition:background .15s,border-color .15s;background:#FAFAFC}
-.drop.over{background:var(--brand-soft);border-color:var(--brand)}
-.drop .ic{width:52px;height:52px;color:var(--brand);margin-bottom:12px}
+.drop.over{background:var(--orange-soft);border-color:var(--orange)}
+.drop .ic{width:52px;height:52px;color:var(--orange);margin-bottom:12px}
 .drop-text{font-size:15px;font-weight:600;color:var(--muted);margin:0 0 16px;text-align:center}
 .drop .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 
@@ -85,20 +88,20 @@ button{cursor:pointer}
 
 .send-bar{display:flex;align-items:center;gap:10px;width:100%}
 .target-input-wrap{display:flex;align-items:center;gap:8px;background:#F5F6F9;border:1.5px solid var(--line);border-radius:var(--r);padding:0 14px;flex:1;min-height:48px;transition:border-color .15s,background .15s}
-.target-input-wrap:focus-within{border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(23,24,28,.08)}
+.target-input-wrap:focus-within{border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(255,102,0,.12)}
 .target-input-wrap label{font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}
 .target-input-wrap input{border:none;background:transparent;width:100%;font-size:16px;font-weight:800;color:var(--ink);padding:0}
 .target-input-wrap input:focus{outline:none}
 .target-input-wrap input::placeholder{font-size:13px;font-weight:500;color:#9A9EA9}
 
-.go{min-height:48px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:var(--r);background:var(--brand);color:#fff;font-weight:800;font-size:15px;white-space:nowrap;transition:background .15s,transform .1s;box-shadow:0 4px 12px rgba(217,58,47,.25)}
+.go{min-height:48px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:var(--r);background:var(--orange);color:#fff;font-weight:800;font-size:15px;white-space:nowrap;transition:background .15s,transform .1s,box-shadow .15s;box-shadow:0 4px 14px rgba(255,102,0,.28)}
 .go:active:not(:disabled){transform:scale(.98)}
-.go:hover:not(:disabled){background:#BF2F25}
+.go:hover:not(:disabled){background:var(--orange-hover);box-shadow:0 6px 18px rgba(255,102,0,.35)}
 .go:disabled{background:#E3E5EA;color:#9A9EA9;cursor:not-allowed;box-shadow:none}
 
 /* File list & items */
 .fl{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px;text-align:left;max-height:280px;overflow:auto}
-.fl li{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F5F6F8;border-radius:10px;border:1px solid transparent;transition:background .15s,border-color .15s}
+.fl li{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F5F6F8;border-radius:10px;border:1px solid transparent;transition:background .15s,border-color .15s}
 .fl li:hover{background:#EFF1F5;border-color:var(--line)}
 .ext{min-width:38px;height:28px;border-radius:6px;background:var(--ink);color:#fff;font:700 11px var(--f);display:grid;place-items:center;padding:0 4px}
 
@@ -106,36 +109,33 @@ button{cursor:pointer}
 .file-thumb{width:42px;height:42px;border-radius:8px;flex:none;object-fit:cover;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--ink);color:#fff;text-transform:uppercase;cursor:pointer}
 .thumb-img{border:1px solid rgba(0,0,0,.08);transition:transform .15s;background:#EAECF0}
 .thumb-img:hover{transform:scale(1.06)}
-.thumb-pdf{background:#D93A2F;color:#fff}
+.thumb-pdf{background:#B4281F;color:#fff}
 .thumb-video{background:#4F46E5;color:#fff}
 .thumb-audio{background:#0284C7;color:#fff}
 .thumb-text{background:#374151;color:#fff}
 .thumb-ext{background:var(--ink);color:#fff}
 
 .file-info-wrap{flex:1;min-width:0;display:flex;flex-direction:column;cursor:pointer}
-.file-info-wrap .n{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.file-info-wrap .n{font-weight:600;font-size:13px;word-break:break-all;overflow-wrap:anywhere;white-space:normal;color:var(--ink);line-height:1.35}
 .file-info-wrap .z{font-size:11px;color:var(--muted);margin-top:2px}
 
 .file-row-actions{display:flex;align-items:center;gap:6px;flex:none}
-.btn-file-action{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border:1px solid var(--line);background:#fff;text-decoration:none;color:var(--ink);transition:all .15s}
-.btn-file-action:hover{background:#F0F1F4}
-.btn-file-action.view{color:var(--brand);border-color:#FDECEA;background:#FDECEA}
-.btn-file-action.view:hover{background:#FBD5D1}
-.btn-file-action.dl{color:var(--ok);border-color:var(--ok-soft);background:var(--ok-soft)}
-.btn-file-action.dl:hover{background:#C8EAD7}
-.btn-file-action.del{color:var(--bad);background:#fff;padding:5px 8px}
-.btn-file-action.del:hover{background:var(--brand-soft)}
+.btn-file-action{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border:1px solid transparent;text-decoration:none;transition:all .15s}
+.btn-file-action.view{color:var(--orange);border-color:#FFD4BA;background:var(--orange-soft)}
+.btn-file-action.view:hover{background:#FFE0CC}
+.btn-file-action.dl{color:#fff;background:var(--orange);border-color:var(--orange);box-shadow:0 2px 6px rgba(255,102,0,.2)}
+.btn-file-action.dl:hover{background:var(--orange-hover);border-color:var(--orange-hover)}
+.btn-file-action.del{color:var(--bad);background:#fff;border-color:var(--line);padding:6px 9px}
+.btn-file-action.del:hover{background:var(--bad-soft)}
 
-/* Select & Batch Download Bar */
-.select-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F0F2F6;border-radius:10px;margin-top:10px;gap:8px}
-.select-all-box{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;user-select:none}
-.select-all-box input[type="checkbox"], .file-chk{width:18px;height:18px;accent-color:var(--brand);cursor:pointer;margin:0}
-.btn-dl-selected{min-height:36px;padding:0 14px;background:var(--ok);color:#fff;border:0;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
-.btn-dl-selected:hover:not(:disabled){background:#17714A}
-.btn-dl-selected:disabled{background:#D0D3DC;color:#8E93A0;cursor:not-allowed}
+/* Batch Download Bar */
+.select-bar{display:flex;align-items:center;justify-content:flex-end;padding:8px 12px;background:#F0F2F6;border-radius:10px;margin-top:10px;gap:8px}
+.btn-dl-all{min-height:38px;padding:0 18px;background:var(--orange);color:#fff;border:0;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s,transform .1s;box-shadow:0 2px 8px rgba(255,102,0,.25)}
+.btn-dl-all:hover{background:var(--orange-hover)}
+.btn-dl-all:active{transform:scale(.98)}
 
 textarea{width:100%;min-height:220px;border:1.5px solid var(--line);border-radius:var(--r);padding:14px;font:14px/1.6 Consolas,'Courier New',monospace;resize:vertical;background:#FAFAFC;transition:border-color .15s}
-textarea:focus{border-color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--orange);background:#fff;outline:none}
 .cnt{margin:0;font-size:12px;color:var(--muted);text-align:right;font-weight:600}
 
 /* Transfer log list */
@@ -144,20 +144,20 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 .xf .xl{flex:1;font-weight:600;font-size:13px}
 .dots{display:flex;gap:4px}
 .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--f);background:#EEF0F3;color:var(--muted)}
-.dot.ok{background:var(--ok-soft);color:var(--ok)}
-.dot.no{background:var(--brand-soft);color:var(--bad)}
+.dot.ok{background:var(--orange-soft);color:var(--orange)}
+.dot.no{background:var(--bad-soft);color:var(--bad)}
 .dot.wait{background:#FFF3CC;color:#7A5B00}
 
 /* Received Inbox items */
 .item{background:#fff;border-radius:var(--r);border:1px solid var(--line);padding:16px;margin-bottom:12px;border-top:4px solid var(--sun)}
-.item.received{border-top-color:var(--ok)}
+.item.received{border-top-color:var(--orange)}
 .item.blocked{border-top-color:var(--line);display:flex;align-items:center;gap:10px;color:var(--muted)}
 .item .hd{display:flex;align-items:center;gap:10px;font-weight:700}
 .item pre{margin:10px 0;padding:12px;background:#F5F6F8;border-radius:8px;max-height:260px;overflow:auto;white-space:pre-wrap;font:13px/1.6 Consolas,monospace}
 .pv{margin:8px 0 0;color:var(--muted);overflow-wrap:anywhere;font-size:13px}
 .acts{display:flex;gap:10px;margin-top:12px}
-.acts .allow{flex:1;min-height:44px;border:0;border-radius:var(--r);background:var(--ok);color:#fff;font-weight:800;font-size:14px}
-.acts .allow:hover:not(:disabled){background:#17714A}
+.acts .allow{flex:1;min-height:44px;border:0;border-radius:var(--r);background:var(--orange);color:#fff;font-weight:800;font-size:14px;box-shadow:0 2px 8px rgba(255,102,0,.25);transition:background .15s}
+.acts .allow:hover:not(:disabled){background:var(--orange-hover)}
 .acts .block{min-height:44px;padding:0 16px;border:1.5px solid var(--line);border-radius:var(--r);background:#fff;font-weight:700;color:var(--bad);font-size:13px}
 .empty{display:grid;place-items:center;padding:48px 0;color:#B8BCC6}
 .empty .ic{width:56px;height:56px}
@@ -165,16 +165,14 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 /* Incoming Notification Modal Popup Window */
 .modal-overlay{position:fixed;inset:0;background:rgba(23,24,28,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:99999;animation:modalFade .2s ease-out}
 .modal-card{background:#fff;border-radius:24px;box-shadow:0 24px 56px rgba(0,0,0,.25);max-width:380px;width:100%;padding:26px 20px;text-align:center;animation:modalScale .25s cubic-bezier(.16,1,.3,1)}
-.modal-card.wide-modal{max-width:520px;text-align:left}
-.modal-card.wide-modal .modal-title, .modal-card.wide-modal .modal-desc, .modal-card.wide-modal .modal-badge{margin-left:auto;margin-right:auto;display:block;text-align:center}
-.modal-badge{width:52px;height:52px;border-radius:50%;background:var(--brand);color:#fff;font:800 22px/52px var(--f);display:inline-grid;place-items:center;margin-bottom:12px;box-shadow:0 8px 20px rgba(217,58,47,.25)}
-.modal-badge.ok{background:var(--ok);box-shadow:0 8px 20px rgba(30,138,89,.25)}
+.modal-badge{width:52px;height:52px;border-radius:50%;background:var(--orange);color:#fff;font:800 22px/52px var(--f);display:inline-grid;place-items:center;margin-bottom:12px;box-shadow:0 8px 20px rgba(255,102,0,.25)}
 .modal-title{font-size:19px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em}
 .modal-desc{font-size:13px;color:var(--muted);margin:0 0 16px;line-height:1.4}
 .modal-filebox{background:#F5F6F8;border-radius:var(--r);padding:10px 12px;margin-bottom:18px;text-align:left;max-height:140px;overflow:auto}
 .modal-acts{display:flex;gap:10px}
-.modal-allow{flex:1;min-height:48px;border:0;border-radius:var(--r);background:var(--ok);color:#fff;font-weight:800;font-size:15px;cursor:pointer;transition:background .15s}
-.modal-allow:hover{background:#17714A}
+.modal-allow{flex:1;min-height:48px;border:0;border-radius:var(--r);background:var(--orange);color:#fff;font-weight:800;font-size:15px;cursor:pointer;transition:background .15s,transform .1s;box-shadow:0 4px 14px rgba(255,102,0,.25)}
+.modal-allow:hover{background:var(--orange-hover)}
+.modal-allow:active{transform:scale(.98)}
 .modal-block{min-height:48px;padding:0 18px;border:1.5px solid var(--line);border-radius:var(--r);background:#fff;color:var(--bad);font-weight:700;font-size:14px;cursor:pointer}
 
 /* Universal File Preview Modal */
@@ -183,18 +181,18 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 .preview-modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:#FAFAFC;gap:12px}
 .preview-file-info{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .preview-ext-badge{min-width:44px;height:30px;border-radius:6px;font:800 11px var(--f);display:grid;place-items:center;color:#fff;background:var(--ink);padding:0 6px}
-.preview-ext-badge.image{background:#D93A2F}
+.preview-ext-badge.image{background:var(--orange)}
 .preview-ext-badge.pdf{background:#B4281F}
 .preview-ext-badge.video{background:#4F46E5}
 .preview-ext-badge.audio{background:#0284C7}
 .preview-ext-badge.text{background:#374151}
 
 .preview-file-text{min-width:0;flex:1}
-.preview-file-name{font-weight:700;font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-file-name{font-weight:700;font-size:15px;color:var(--ink);word-break:break-all;overflow-wrap:anywhere;white-space:normal}
 .preview-file-meta{font-size:12px;color:var(--muted);margin-top:2px}
 .preview-header-actions{display:flex;align-items:center;gap:8px;flex:none}
-.btn-preview-dl{padding:7px 14px;background:var(--ok);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
-.btn-preview-dl:hover{background:#17714A}
+.btn-preview-dl{padding:8px 18px;background:var(--orange);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background .15s;box-shadow:0 2px 8px rgba(255,102,0,.25)}
+.btn-preview-dl:hover{background:var(--orange-hover)}
 .btn-preview-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:16px;font-weight:700;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:all .15s}
 .btn-preview-close:hover{background:#F0F1F4;color:var(--ink)}
 
@@ -205,7 +203,7 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 .preview-pdf-wrap{width:100%;height:80vh;display:flex;flex-direction:column}
 .preview-iframe{width:100%;flex:1;border:none;background:#fff}
 .preview-pdf-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center}
-.btn-pdf-external{font-size:13px;font-weight:700;color:var(--brand);text-decoration:none}
+.btn-pdf-external{font-size:13px;font-weight:700;color:var(--orange);text-decoration:none}
 .btn-pdf-external:hover{text-decoration:underline}
 
 .preview-media{max-width:100%;max-height:80vh;border-radius:8px}
@@ -248,10 +246,10 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
   .preview-modal-header{padding:12px 14px}
   .preview-img{max-height:75vh}
   .preview-pdf-wrap{height:75vh}
-  .select-bar{flex-direction:column;align-items:stretch;gap:8px}
-  .btn-dl-selected{justify-content:center}
+  .select-bar{justify-content:stretch}
+  .btn-dl-all{width:100%;justify-content:center}
   .file-row-actions{gap:4px}
-  .btn-file-action{padding:5px 7px;font-size:11px}
+  .btn-file-action{padding:5px 9px;font-size:11px}
   .auto-allow-toggle{padding:4px 8px;gap:5px}
   .auto-allow-text{font-size:11px}
   .toggle-slider{width:24px;height:14px}
@@ -266,11 +264,10 @@ textarea:focus{border-color:var(--ink);background:#fff;outline:none}
 <body>
 
 <div class="app-wrap">
-  <!-- Top bar with Online indicator, Universal Allow toggle & Single "Your ID" badge -->
+  <!-- Top bar with Online indicator dot, Universal Allow toggle & Single "Your ID" badge -->
   <header class="top-bar">
     <div class="status-indicator" id="netStatus" title="Network status">
       <span class="status-dot"></span>
-      <span class="status-text">Connecting...</span>
     </div>
     <div class="header-right-group">
       <label class="auto-allow-toggle" title="Universal Allow: Automatically accept incoming transfers without permission prompt">
@@ -377,18 +374,16 @@ function pickAvailableId() {
   return id;
 }
 
-function updateNetStatus(online, text) {
+function updateNetStatus(online) {
   const dot = $('#netStatus .status-dot');
-  const txt = $('#netStatus .status-text');
-  if (dot && txt) {
+  const wrap = $('#netStatus');
+  if (dot) {
     if (online) {
       dot.className = 'status-dot online';
-      txt.textContent = text || 'Online';
-      txt.style.color = 'var(--ok)';
+      if (wrap) wrap.title = 'Status: Online';
     } else {
       dot.className = 'status-dot';
-      txt.textContent = text || 'Connecting...';
-      txt.style.color = 'var(--muted)';
+      if (wrap) wrap.title = 'Status: Connecting...';
     }
   }
 }
@@ -600,7 +595,7 @@ function showIncomingNotification(item) {
     previewHtml = `
       <div class="modal-filebox">
         <ul class="fl" style="margin:0;">
-          ${(item.meta || []).slice(0, 4).map(f => {
+          ${(item.meta || []).map(f => {
             const cat = getFileTypeCategory(f.name, f.type);
             return `
               <li>
@@ -610,7 +605,6 @@ function showIncomingNotification(item) {
               </li>
             `;
           }).join('')}
-          ${item.meta && item.meta.length > 4 ? `<li><span class="n dim">+${item.meta.length - 4} more</span></li>` : ''}
         </ul>
       </div>
     `;
@@ -625,7 +619,7 @@ function showIncomingNotification(item) {
         ${previewHtml}
         <div class="modal-acts" id="modalActions">
           <button class="modal-block" id="modalDecline">Decline</button>
-          <button class="modal-allow" id="modalAllow">Allow & Receive</button>
+          <button class="modal-allow" id="modalAllow">Accept</button>
         </div>
       </div>
     </div>
@@ -636,7 +630,10 @@ function showIncomingNotification(item) {
   $('#modalAllow').onclick = () => {
     item.status = 'accepting';
     post({ t: 'ok', oid: item.oid, toUid: item.uid, toId: item.from.id, fromId: me.id });
-    $('#modalActions').innerHTML = `<p style="margin:0;font-size:15px;font-weight:700;color:var(--ok);">Receiving files… ⏳</p>`;
+    closeModal();
+    tab = 'receive';
+    showToast(`Receiving files from ID ${fromId}… ⏳`);
+    draw();
   };
 
   $('#modalDecline').onclick = () => {
@@ -648,7 +645,7 @@ function showIncomingNotification(item) {
 }
 
 function onDataReceived(item) {
-  // If text, copy to clipboard
+  closeModal(); // Ensure alert box is closed immediately upon data receipt
   if (item.text) {
     try { navigator.clipboard.writeText(item.text); } catch (e) {}
   }
@@ -656,42 +653,14 @@ function onDataReceived(item) {
   const fromId = item.fromId || item.from?.id || '?';
   const fileCount = (item.urls || []).length;
 
-  if (autoAllow) {
-    showToast(item.text ? `✓ Received text from ID ${fromId} (copied to clipboard)` : `⚡ Universal Allow: Received ${fileCount} file(s) from ID ${fromId}!`);
+  if (item.text) {
+    showToast(`✓ Received text from ID ${fromId} (copied to clipboard)`);
+  } else {
+    showToast(`✓ Received ${fileCount} file${fileCount > 1 ? 's' : ''} from ID ${fromId}!`);
   }
 
-  // Update modal with received file list (User selects what to download)
-  const card = $('#activeModal .modal-card');
-  if (card) {
-    if (item.text) {
-      card.innerHTML = `
-        <div class="modal-badge ok">✓</div>
-        <h3 class="modal-title">Text Received!</h3>
-        <p class="modal-desc">Message copied to your clipboard automatically.</p>
-        <pre style="max-height:160px;overflow:auto;text-align:left;background:#F5F6F8;padding:12px;border-radius:12px;font:13px/1.6 Consolas,monospace;white-space:pre-wrap;">${esc(item.text)}</pre>
-        <button class="btn" style="width:100%;margin-top:14px;" id="modalDoneBtn">Done</button>
-      `;
-      $('#modalDoneBtn').onclick = closeModal;
-    } else {
-      const fromId = item.fromId || item.from?.id || '?';
-      const fileCount = (item.urls || []).length;
-      card.classList.add('wide-modal');
-      card.innerHTML = `
-        <div class="modal-badge ok">✓</div>
-        <h3 class="modal-title">Transfer Complete!</h3>
-        <p class="modal-desc">Received ${fileCount} file${fileCount > 1 ? 's' : ''} from ID ${fromId}. Preview or select files to download below:</p>
-        ${renderReceivedFileList(item)}
-        <div class="modal-acts" style="margin-top:16px;">
-          <button class="btn" style="flex:1;" id="modalDoneBtn">Done</button>
-        </div>
-      `;
-      $('#modalDoneBtn').onclick = () => {
-        closeModal();
-        draw();
-      };
-      updateSelectCount(item.oid);
-    }
-  }
+  tab = 'receive';
+  draw();
 }
 
 function closeModal() {
@@ -704,21 +673,12 @@ function downloadFiles(files) {
     setTimeout(() => {
       const a = document.createElement('a');
       a.href = f.url;
-      a.download = f.name.split('/').pop() || 'download';
+      const fname = f.name.includes('/') ? f.name.split('/').pop() : f.name;
+      a.download = fname || 'file';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-    }, idx * 220);
-  });
-}
-
-function updateSelectCount(oid) {
-  const checked = document.querySelectorAll(`.file-chk[data-oid="${oid}"]:checked`);
-  const counts = document.querySelectorAll(`.sel-count[data-oid="${oid}"]`);
-  counts.forEach(c => c.textContent = checked.length);
-  const dlBtns = document.querySelectorAll(`.btn-dl-selected[data-oid="${oid}"]`);
-  dlBtns.forEach(b => {
-    b.disabled = checked.length === 0;
+    }, idx * 250);
   });
 }
 
@@ -726,6 +686,7 @@ function renderReceivedFileList(item) {
   if (!item.urls || !item.urls.length) return '';
   const rows = item.urls.map((u, idx) => {
     const cat = getFileTypeCategory(u.name, u.type);
+    const origFileName = u.name.includes('/') ? u.name.split('/').pop() : u.name;
     let thumbHtml = '';
     if (cat === 'image') {
       thumbHtml = `<img src="${u.url}" class="file-thumb thumb-img" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" alt="thumb" title="Click to preview image">`;
@@ -743,7 +704,6 @@ function renderReceivedFileList(item) {
 
     return `
       <li>
-        <input type="checkbox" class="file-chk" data-oid="${item.oid}" data-idx="${idx}" checked>
         ${thumbHtml}
         <div class="file-info-wrap" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}">
           <span class="n" title="${esc(u.name)}">${esc(u.name)}</span>
@@ -751,23 +711,23 @@ function renderReceivedFileList(item) {
         </div>
         <div class="file-row-actions">
           <button class="btn-file-action view" data-act="preview-received" data-oid="${item.oid}" data-idx="${idx}" title="Preview file live">👁 View</button>
-          <a class="btn-file-action dl" href="${u.url}" download="${esc(u.name.split('/').pop() || 'download')}" title="Save file">⬇ Save</a>
+          <a class="btn-file-action dl" href="${u.url}" download="${esc(origFileName)}" title="Download file">⬇ Download</a>
         </div>
       </li>
     `;
   }).join('');
 
-  return `
+  const multiBar = item.urls.length > 1 ? `
     <div class="select-bar">
-      <label class="select-all-box">
-        <input type="checkbox" class="chk-select-all" data-oid="${item.oid}" checked>
-        <span>Select All</span>
-      </label>
-      <button class="btn-dl-selected" data-act="download-selected" data-oid="${item.oid}">
-        ⬇ Download Selected (<span class="sel-count" data-oid="${item.oid}">${item.urls.length}</span>)
+      <button class="btn-dl-all" data-act="download-all" data-oid="${item.oid}">
+        ⬇ Download All (${item.urls.length})
       </button>
     </div>
-    <ul class="fl" style="max-height:280px;margin-top:10px;">
+  ` : '';
+
+  return `
+    ${multiBar}
+    <ul class="fl" style="max-height:360px;margin-top:10px;">
       ${rows}
     </ul>
   `;
@@ -1011,12 +971,12 @@ function drawPanel() {
 
 function itemHtml(i) {
   const fromId = i.fromId || i.from?.id || '?';
-  const av = `<span class="ext" style="background:var(--ok);">${fromId}</span>`;
+  const av = `<span class="ext" style="background:var(--orange);">${fromId}</span>`;
   if (i.status === 'blocked') return `<article class="item blocked">${av}<span>Blocked from ID ${fromId}</span></article>`;
   const list = i.kind === 'text' ? `<p class="pv">${esc(i.meta.preview)}…</p>` : `<ul class="fl">${(i.meta || []).slice(0,6).map(f => `<li><span class="ext">${esc(ext(f.name))}</span><span class="n">${esc(f.name)}</span><span class="z">${fmt(f.size)}</span></li>`).join('')}</ul>`;
-  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>Incoming from ID ${fromId} (${i.kind === 'text' ? 'Text' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')})</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
-  if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">Receiving from ID ${fromId}…</span></div></article>`;
-  const body = i.kind === 'text' ? `<pre style="white-space:pre-wrap;font:13px/1.6 Consolas,monospace;background:#F5F6F8;padding:12px;border-radius:10px;max-height:240px;overflow:auto;">${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
+  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>Incoming from ID ${fromId} (${i.kind === 'text' ? 'Text' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')})</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Accept</button><button class="block" data-act="block" data-oid="${i.oid}">Decline</button></div></article>`;
+  if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">Receiving from ID ${fromId}… ⏳</span></div></article>`;
+  const body = i.kind === 'text' ? `<pre style="white-space:pre-wrap;font:13px/1.6 Consolas,monospace;background:#F5F6F8;padding:12px;border-radius:10px;max-height:240px;overflow:auto;">${esc(i.text)}</pre><button class="btn" style="background:var(--orange);color:#fff;border-color:var(--orange);font-weight:700;" data-act="copy" data-oid="${i.oid}">Copy</button>`
     : renderReceivedFileList(i);
   return `<article class="item received"><div class="hd">${av}<span>Received from ID ${fromId}</span></div>${body}</article>`;
 }
@@ -1027,17 +987,12 @@ document.addEventListener('click', async e => {
   if (t.dataset.tab) { tab = t.dataset.tab; draw(); return; }
   const a = t.dataset.act, i = inbox.find(x => x.oid === t.dataset.oid);
 
-  if (a === 'download-selected') {
+  if (a === 'download-all') {
     const oid = t.dataset.oid;
     const item = inbox.find(x => x.oid === oid);
-    if (!item || !item.urls) return;
-    const checkedBoxes = document.querySelectorAll(`.file-chk[data-oid="${oid}"]:checked`);
-    if (!checkedBoxes.length) {
-      alert('Please select at least one file to download.');
-      return;
-    }
-    const selectedFiles = [...checkedBoxes].map(cb => item.urls[parseInt(cb.dataset.idx)]).filter(Boolean);
-    downloadFiles(selectedFiles);
+    if (!item || !item.urls || !item.urls.length) return;
+    downloadFiles(item.urls);
+    showToast(`Downloading all ${item.urls.length} files…`);
     return;
   }
 
@@ -1126,21 +1081,6 @@ document.addEventListener('click', async e => {
 });
 
 document.addEventListener('change', e => {
-  if (e.target.classList.contains('chk-select-all')) {
-    const oid = e.target.dataset.oid;
-    const isChecked = e.target.checked;
-    const chks = document.querySelectorAll(`.file-chk[data-oid="${oid}"]`);
-    chks.forEach(c => c.checked = isChecked);
-    updateSelectCount(oid);
-  }
-  if (e.target.classList.contains('file-chk')) {
-    const oid = e.target.dataset.oid;
-    const all = document.querySelectorAll(`.file-chk[data-oid="${oid}"]`);
-    const checked = document.querySelectorAll(`.file-chk[data-oid="${oid}"]:checked`);
-    const selectAll = document.querySelector(`.chk-select-all[data-oid="${oid}"]`);
-    if (selectAll) selectAll.checked = (all.length === checked.length && all.length > 0);
-    updateSelectCount(oid);
-  }
   if (e.target.id === 'f1' || e.target.id === 'f2') {
     staged = [...e.target.files];
     drawPanel();
