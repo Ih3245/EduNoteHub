@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Transfer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,14 +27,14 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:500 15px/1.5 var(--f);-webkit-font-smoothing:antialiased}
-body{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body{padding:max(env(safe-area-inset-top,0px),16px) 0 max(env(safe-area-inset-bottom,0px),24px);min-height:100vh;display:flex;flex-direction:column;align-items:center}
 button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .ic{width:20px;height:20px;flex:none}
 
 /* Responsive Desktop & Mobile App Wrapper */
-.app-wrap{width:94%;max-width:1380px;margin:12px auto 40px;padding:0 24px;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 54px)}
+.app-wrap{width:94%;max-width:1380px;margin:24px auto 40px;padding:0 24px;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 64px)}
 
 /* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 8px;gap:8px}
@@ -236,10 +239,12 @@ textarea:focus{border-color:var(--orange);background:#fff;outline:none}
 
 /* Mobile Adjustments (Keep clean and compact on phones) */
 @media (max-width: 768px){
-  .app-wrap{width:100%;max-width:100%;margin:8px auto 24px;padding:0 12px;gap:10px}
-  .card{padding:16px;border-radius:16px}
-  .drop{padding:24px 10px;min-height:auto}
-  .drop-text{font-size:13px;margin:0 0 12px}
+  body{padding-top:max(env(safe-area-inset-top,0px),28px);padding-bottom:max(env(safe-area-inset-bottom,0px),36px)}
+  .app-wrap{width:100%;max-width:540px;margin:24px auto 44px;padding:0 16px;gap:16px}
+  .top-bar{padding:8px 4px 14px}
+  .card{padding:20px 16px;border-radius:18px}
+  .drop{padding:28px 12px;min-height:auto}
+  .drop-text{font-size:14px;margin:0 0 14px}
   .seg button{min-height:42px;font-size:13px;gap:4px}
   .target-input-wrap{padding:0 10px}
   .go{padding:0 18px;font-size:14px}
