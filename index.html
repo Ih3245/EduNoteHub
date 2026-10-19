@@ -30,32 +30,35 @@ button{cursor:pointer}
 .status-indicator{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
 .status-dot{width:9px;height:9px;border-radius:50%;background:#8A8E99;transition:background .2s,box-shadow .2s}
 .status-dot.online{background:var(--ok);box-shadow:0 0 8px rgba(30,138,89,.5)}
-.room{display:flex;gap:var(--s2)}
-.room input{width:150px;min-height:44px;border:1px solid var(--line);border-radius:var(--r);padding:0 var(--s3);background:var(--card)}
-.room input::placeholder{color:#8A8E99}
-.room button{min-height:44px;border:0;border-radius:var(--r);background:var(--ink);color:#fff;padding:0 var(--s4);font-weight:700;transition:background .15s}
-.room button:hover{background:#34363E}
+.header-badge{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;background:#fff;padding:6px 14px;border-radius:var(--r);border:1px solid var(--line)}
+.header-badge b{color:var(--brand);font-size:17px}
 .shell{display:grid;grid-template-columns:64px 1fr;gap:var(--s5);max-width:1120px;margin:0 auto;padding:var(--s2) var(--s6) var(--s7);align-items:start}
 .card{background:var(--card);border-radius:var(--rl);box-shadow:var(--sh);padding:var(--s5)}
-.stamp{background:var(--brand);color:#fff;border-radius:var(--r);height:44px;display:grid;place-items:center;margin-bottom:var(--s3)}
+.stamp{background:var(--brand);color:#fff;border-radius:var(--r);height:44px;display:grid;place-items:center;margin-bottom:4px;cursor:pointer;transition:transform .1s,opacity .15s}
+.stamp:hover{opacity:.9;transform:scale(1.02)}
+.stamp-lbl{font-size:10px;font-weight:700;text-align:center;color:var(--muted);margin-bottom:var(--s3);text-transform:uppercase;letter-spacing:.03em}
 #seats{flex-direction:column;flex-wrap:nowrap;align-items:center}
 aside .card{background:none;box-shadow:none;padding:0}
-.stamp .big{font:800 26px/1.4 var(--f)}
+.stamp .big{font:800 24px/1.4 var(--f)}
 .stamp .big.pop{animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 .seatrow{display:flex;flex-wrap:wrap;gap:var(--s2)}
-.seat{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font:700 17px var(--f);display:grid;place-items:center;padding:0;transition:background .15s,border-color .15s}
-.seat.you{background:var(--sun);border-color:var(--sun)}
+.seat{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font:700 17px var(--f);display:grid;place-items:center;padding:0;transition:background .15s,border-color .15s,transform .1s;position:relative}
+.seat.you{background:var(--sun);border-color:var(--sun);font-weight:800}
 .seat.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.seat.active-peer{border-color:var(--ok);font-weight:800}
+.seat.active-peer::after{content:'';position:absolute;top:3px;right:3px;width:7px;height:7px;background:var(--ok);border-radius:50%}
 .seat.sm{width:34px;height:34px;font-size:15px}
-.pick:hover{border-color:var(--ink)}
+.pick:hover{border-color:var(--ink);transform:scale(1.05)}
 .pick[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
 .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s1);background:#E9EBEF;border-radius:var(--rl);padding:var(--s1);margin-bottom:var(--s5)}
 .seg button{min-height:48px;display:flex;align-items:center;justify-content:center;gap:var(--s2);border:0;background:none;border-radius:var(--r);font-weight:700;color:var(--muted);transition:background .15s,color .15s}
 .seg button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
 .seg i{font-style:normal;min-width:22px;height:22px;border-radius:11px;background:var(--brand);color:#fff;font-size:13px;display:inline-grid;place-items:center;padding:0 6px}
-.to{display:flex;align-items:center;gap:var(--s4);margin-bottom:var(--s5)}
-.to b{color:var(--muted);font-weight:700}
+.to{display:flex;align-items:center;gap:var(--s4);margin-bottom:var(--s5);flex-wrap:wrap}
+.to b{color:var(--muted);font-weight:700;white-space:nowrap}
+.manual-id{display:flex;align-items:center;gap:6px;margin-left:auto}
+.manual-id input{width:70px;min-height:40px;border:1.5px solid var(--line);border-radius:var(--r);padding:0 var(--s2);text-align:center;font-weight:700;font-size:16px;background:var(--card)}
 .dim{color:var(--muted)}
 .drop{border:2px dashed #CBCFD8;border-radius:var(--rl);padding:var(--s6) var(--s5);text-align:center;transition:background .15s,border-color .15s}
 .drop.over{background:var(--brand-soft);border-color:var(--brand)}
@@ -101,9 +104,9 @@ textarea{width:100%;min-height:260px;border:1px solid var(--line);border-radius:
 .empty{display:grid;place-items:center;padding:var(--s7) 0;color:#B8BCC6}
 .empty .ic{width:64px;height:64px}
 @media (max-width:860px){
-  .bar{padding:var(--s3) var(--s4);flex-wrap:wrap}
+  .bar{padding:var(--s3) var(--s4)}
   .shell{grid-template-columns:52px 1fr;padding:var(--s2) var(--s4) var(--s6);gap:var(--s3)}
-  .room input{width:110px}
+  .manual-id{width:100%;justify-content:flex-start;margin-left:0;margin-top:var(--s2)}
   .card{padding:var(--s4)}
   .drop{padding:var(--s5) var(--s3)}
   textarea{min-height:180px}
@@ -120,12 +123,20 @@ textarea{width:100%;min-height:260px;border:1px solid var(--line);border-radius:
     <span class="status-dot"></span>
     <span class="status-text">Connecting...</span>
   </div>
-  <div class="room"><input id="room" placeholder="CSE-LAB-302" aria-label="Room" autocomplete="off"><button id="join">Join</button></div>
+  <div class="header-badge">
+    <span>Your ID:</span>
+    <b id="headerMyId">–</b>
+  </div>
 </header>
 <div class="shell">
   <aside>
-    <div class="stamp"><div class="big" id="myid" aria-live="polite">–</div></div>
-    <div class="card"><div class="seatrow" id="seats" aria-label="Seats in this room"></div></div>
+    <div class="stamp" id="stampWrap" title="Click to change your Seat ID">
+      <div class="big" id="myid" aria-live="polite">–</div>
+    </div>
+    <div class="stamp-lbl">Your ID (Tap to edit)</div>
+    <div class="card">
+      <div class="seatrow" id="seats" aria-label="Seats in this room"></div>
+    </div>
   </aside>
   <main id="drop">
     <nav class="seg" id="tabs" role="tablist"></nav>
@@ -139,10 +150,16 @@ const fmt=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFix
 const P={send:'<path d="M7 3h7l5 5v13H7zM14 3v5h5"/>',group:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M16 5.2a3 3 0 010 5.6M18 14c1.8.7 3 2.4 3 5"/>',text:'<path d="M5 6h14M5 12h14M5 18h9"/>',up:'<path d="M12 16V4m0 0L7 9m5-5l5 5M4 20h16"/>',inbox:'<path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1.5 2.5h5L16 13h5"/>'};
 const svg=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
 const ext=n=>{const m=n.match(/\.([A-Za-z0-9]{1,4})$/);return m?m[1].toLowerCase():'file'};
-const me={uid:Math.random().toString(36).slice(2,10),id:0};
-let ch,mqttClient,peer,room='CSE-LAB-302',peers=new Map(),sent=new Map(),log=[],inbox=[],tab='send',targets=new Set(),staged=[],textVal='',lastSig='';
-const others=()=>[...peers.values()].sort((a,b)=>a.id-b.id);
-const maxId=()=>Math.max(0,me.id,...others().map(p=>p.id));
+
+const me = {
+  uid: Math.random().toString(36).slice(2, 10),
+  id: parseInt(localStorage.getItem('my_seat_id')) || 0
+};
+
+let ch, mqttClient, peer, room = 'TRANSFER_LAB';
+let peers = new Map(), sent = new Map(), log = [], inbox = [], tab = 'send', targets = new Set(), staged = [], textVal = '', lastSig = '';
+const others = () => [...peers.values()].sort((a,b) => a.id - b.id);
+const maxId = () => Math.max(0, me.id, ...others().map(p => p.id));
 
 function updateNetStatus(online, text) {
   const dot = $('#netStatus .status-dot');
@@ -172,43 +189,39 @@ function initPeer() {
         ]
       }
     });
-    peer.on('open', () => console.log('PeerJS ready'));
     peer.on('connection', conn => {
-      conn.on('data', data => {
-        handle(data);
-      });
+      conn.on('data', data => handle(data));
     });
-    peer.on('error', err => {
-      console.warn('Peer error:', err.type);
-    });
+    peer.on('error', err => console.warn('Peer error:', err.type));
   } catch (e) {
     console.error('Peer init error:', e);
   }
 }
 
-function post(m){
-  const payload = { ...m, uid: me.uid };
+function post(m) {
+  const payload = { ...m, uid: me.uid, fromId: me.id };
   if (ch) {
     try { ch.postMessage(payload); } catch (e) {}
   }
   if (mqttClient && mqttClient.connected) {
     try {
       if (payload.t !== 'data' || payload.text) {
-        mqttClient.publish('dak/lab/v1/' + encodeURIComponent(room), JSON.stringify(payload));
+        mqttClient.publish('dak/main/room', JSON.stringify(payload));
       }
     } catch (e) {}
   }
 }
 
-function connect(){
+function connect() {
   if (ch) { post({ t: 'bye' }); try { ch.close(); } catch(e){} }
   if (mqttClient) {
     try {
-      mqttClient.publish('dak/lab/v1/' + encodeURIComponent(room), JSON.stringify({ t: 'bye', uid: me.uid }));
+      mqttClient.publish('dak/main/room', JSON.stringify({ t: 'bye', uid: me.uid, fromId: me.id }));
       mqttClient.end();
     } catch(e){}
   }
-  peers.clear(); me.id = 0; targets.clear();
+  peers.clear();
+  targets.clear();
   updateNetStatus(false, 'Connecting...');
 
   try {
@@ -218,7 +231,6 @@ function connect(){
 
   initPeer();
 
-  const topic = 'dak/lab/v1/' + encodeURIComponent(room);
   try {
     mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
       clientId: 'dak_' + me.uid + '_' + Math.random().toString(16).slice(2, 6),
@@ -228,7 +240,7 @@ function connect(){
     });
 
     mqttClient.on('connect', () => {
-      mqttClient.subscribe(topic, { qos: 0 });
+      mqttClient.subscribe('dak/main/room', { qos: 0 });
       updateNetStatus(true, 'Online');
       post({ t: 'hi' });
     });
@@ -250,7 +262,10 @@ function connect(){
 
   post({ t: 'hi' });
   setTimeout(() => {
-    me.id = Math.max(0, ...others().map(p => p.id)) + 1;
+    if (!me.id) {
+      me.id = Math.max(0, ...others().map(p => p.id)) + 1;
+      localStorage.setItem('my_seat_id', me.id);
+    }
     beat();
     draw();
   }, 500);
@@ -259,11 +274,12 @@ function connect(){
 
 const beat = () => { if (me.id) post({ t: 'beat', id: me.id }) };
 
-function handle(m){
+function handle(m) {
   if (m.t === 'hi') { beat(); return; }
   if (m.t === 'beat') {
     if (m.id === me.id && m.uid < me.uid) {
       me.id = Math.max(maxId(), m.id) + 1;
+      localStorage.setItem('my_seat_id', me.id);
       beat();
     }
     peers.set(m.uid, { id: m.id, seen: Date.now() });
@@ -276,18 +292,19 @@ function handle(m){
     return;
   }
   if (m.t === 'offer') {
-    if (m.to !== 'all' && !m.to.includes(me.id)) return;
-    inbox.unshift({ ...m, status: 'pending' });
+    const isForMe = m.to === 'all' || (Array.isArray(m.to) && m.to.includes(me.id)) || m.toId === me.id;
+    if (!isForMe) return;
+    inbox.unshift({ ...m, status: 'pending', from: { id: m.fromId || m.from?.id || '?' } });
     draw();
     return;
   }
-  if (m.toUid !== me.uid) return;
+  if (m.toUid && m.toUid !== me.uid && m.toId !== me.id) return;
   if (m.t === 'ok') {
     const o = sent.get(m.oid);
     if (!o) return;
     o.res[m.fromId] = 'ok';
 
-    post({ t: 'data', oid: m.oid, toUid: m.uid, files: o.files, text: o.text });
+    post({ t: 'data', oid: m.oid, toUid: m.uid, toId: m.fromId, files: o.files, text: o.text });
 
     if (peer && !peer.destroyed && o.files && o.files.length) {
       try {
@@ -302,9 +319,11 @@ function handle(m){
             t: 'data',
             oid: m.oid,
             toUid: m.uid,
+            toId: m.fromId,
             files: filesData,
             text: o.text,
-            uid: me.uid
+            uid: me.uid,
+            fromId: me.id
           });
         });
       } catch (err) {
@@ -347,15 +366,15 @@ function drawIfChanged() { if (sig() !== lastSig) draw() }
 
 function offer(kind, payload, label, meta) {
   const to = tab === 'group' ? 'all' : [...targets];
-  const ids = to === 'all' ? others().map(p => p.id) : to, res = {};
-  ids.forEach(i => res[i] = 'wait');
+  const res = {};
+  (to === 'all' ? others().map(p => p.id) : to).forEach(i => res[i] = 'wait');
   const oid = me.uid + Date.now();
-  sent.set(oid, { ...payload, label, kind, res });
+  sent.set(oid, { ...payload, label, kind, res, to });
   log.unshift(oid);
   if (log.length > 5) log.pop();
-  post({ t: 'offer', oid, from: { id: me.id }, to, kind, meta });
+  post({ t: 'offer', oid, fromId: me.id, to, kind, meta });
 }
-const canSend = () => me.id && (tab === 'group' ? peers.size > 0 : targets.size > 0);
+const canSend = () => me.id && (tab === 'group' ? true : targets.size > 0);
 
 function draw() {
   lastSig = sig();
@@ -366,7 +385,12 @@ function draw() {
     void big.offsetWidth;
     big.classList.add('pop');
   }
-  $('#seats').innerHTML = [me.id, ...others().map(p => p.id)].filter(Boolean).sort((a,b) => a - b).map(n => `<span class="seat ${n === me.id ? 'you' : ''}">${n}</span>`).join('');
+  const hId = $('#headerMyId');
+  if (hId) hId.textContent = v;
+
+  const onlineSeats = others().map(p => p.id);
+  $('#seats').innerHTML = [me.id, ...onlineSeats].filter(Boolean).sort((a,b) => a - b).map(n => `<span class="seat ${n === me.id ? 'you' : 'active-peer'}" title="ID ${n} ${n === me.id ? '(You)' : '(Online)'}">${n}</span>`).join('');
+  
   const pend = inbox.filter(i => i.status === 'pending').length;
   const T = [['send','Send','send'],['receive','Receive','inbox'],['group','Group','group'],['text','Text','text']];
   $('#tabs').innerHTML = T.map(([k,l,i]) => `<button role="tab" aria-selected="${tab === k}" data-tab="${k}" aria-label="${l}">${svg(i)}<span>${l}</span>${k === 'receive' && pend ? `<i>${pend}</i>` : ''}</button>`).join('');
@@ -374,9 +398,34 @@ function draw() {
 }
 
 function toRow() {
-  const o = others();
-  const body = tab === 'group' ? o.map(p => `<span class="seat on">${p.id}</span>`).join('') : o.map(p => `<button class="seat pick" data-chip="${p.id}" aria-pressed="${targets.has(p.id)}" aria-label="Seat ${p.id}">${p.id}</button>`).join('');
-  return `<div class="to"><b>To</b><div class="seatrow">${body || '<span class="dim">–</span>'}</div></div>`;
+  const onlineIds = new Set(others().map(p => p.id));
+  const defaultQuickIds = [1, 2, 3, 4, 5, 6, 7, 8];
+  const allIds = new Set([...onlineIds, ...defaultQuickIds, ...targets].filter(id => id !== me.id));
+  const sortedIds = [...allIds].sort((a,b) => a - b).slice(0, 10);
+
+  let body;
+  if (tab === 'group') {
+    body = sortedIds.filter(id => onlineIds.has(id)).map(id => `<span class="seat on">${id}</span>`).join('') || '<span class="dim">Send to all online IDs</span>';
+  } else {
+    body = sortedIds.map(id => {
+      const isOnline = onlineIds.has(id);
+      const isSelected = targets.has(id);
+      return `<button class="seat pick ${isOnline ? 'active-peer' : ''}" data-chip="${id}" aria-pressed="${isSelected}" title="ID ${id} ${isOnline ? '(Online)' : ''}">${id}</button>`;
+    }).join('');
+  }
+
+  return `
+    <div class="to">
+      <b>To ID:</b>
+      <div class="seatrow">${body}</div>
+      ${tab !== 'group' ? `
+        <div class="manual-id">
+          <input type="number" min="1" max="99" id="customTarget" placeholder="ID #" aria-label="Target ID">
+          <button class="btn" type="button" style="min-height:40px;padding:0 12px;font-size:13px;" id="addCustomId">Set</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
 }
 
 function xfers() {
@@ -402,28 +451,58 @@ function drawPanel() {
   } else if (tab === 'text') {
     const n = textVal ? textVal.split('\n').length : 0;
     el.innerHTML = `<div class="card">${toRow()}<textarea id="txt" aria-label="Text" spellcheck="false">${esc(textVal)}</textarea>
-      <div class="foot"><span class="sum" id="cnt">${n} lines · ${textVal.length} chars</span><button class="go" data-act="sendtext" ${textVal.trim() && targets.size && me.id ? '' : 'disabled'}>Send</button></div></div>${xfers()}`;
+      <div class="foot"><span class="sum" id="cnt">${n} lines · ${textVal.length} chars</span><button class="go" data-act="sendtext" ${textVal.trim() && canSend() ? '' : 'disabled'}>Send</button></div></div>${xfers()}`;
   } else {
     el.innerHTML = inbox.length ? inbox.map(itemHtml).join('') : `<div class="empty">${svg('inbox')}</div>`;
   }
 }
 
 function itemHtml(i) {
-  const av = `<span class="seat sm">${i.from.id}</span>`;
-  if (i.status === 'blocked') return `<article class="item blocked">${av}<span>Blocked</span></article>`;
+  const fromId = i.fromId || i.from?.id || '?';
+  const av = `<span class="seat sm">${fromId}</span>`;
+  if (i.status === 'blocked') return `<article class="item blocked">${av}<span>Blocked from ID ${fromId}</span></article>`;
   const list = i.kind === 'text' ? `<p class="pv">${esc(i.meta.preview)}…</p>` : `<ul class="fl">${fileRows(i.meta.slice(0,6))}${i.meta.length > 6 ? `<li><span class="n dim">+${i.meta.length - 6}</span></li>`:''}</ul>`;
-  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>${i.kind === 'text' ? 'Text, ' + i.meta.size + ' chars' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')}</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
-  if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">…</span></div></article>`;
+  if (i.status === 'pending') return `<article class="item"><div class="hd">${av}<span>Incoming from ID ${fromId} (${i.kind === 'text' ? 'Text, ' + i.meta.size + ' chars' : i.meta.length + ' file' + (i.meta.length > 1 ? 's' : '')})</span></div>${list}<div class="acts"><button class="allow" data-act="allow" data-oid="${i.oid}">Allow</button><button class="block" data-act="block" data-oid="${i.oid}">Block</button></div></article>`;
+  if (i.status === 'accepting') return `<article class="item"><div class="hd">${av}<span class="dim">Receiving from ID ${fromId}…</span></div></article>`;
   const body = i.kind === 'text' ? `<pre>${esc(i.text)}</pre><button class="btn" data-act="copy" data-oid="${i.oid}">Copy</button>`
     : `<ul class="fl">${i.urls.map(u => `<li><span class="ext">${esc(ext(u.name))}</span><span class="n">${esc(u.name)}</span><span class="z">${fmt(u.size)}</span><a href="${u.url}" download="${esc(u.name.split('/').pop())}">Save</a></li>`).join('')}</ul>`;
-  return `<article class="item received"><div class="hd">${av}</div>${body}</article>`;
+  return `<article class="item received"><div class="hd">${av}<span>Received from ID ${fromId}</span></div>${body}</article>`;
 }
 
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-tab],[data-chip],[data-act]');
+  const t = e.target.closest('[data-tab],[data-chip],[data-act],#stampWrap,#addCustomId');
   if (!t) return;
+  if (t.id === 'stampWrap') {
+    const val = prompt('Change your Seat ID (e.g. 1, 2, 3, 4):', me.id || 1);
+    const n = parseInt(val);
+    if (n && n > 0 && n !== me.id) {
+      post({ t: 'bye' });
+      me.id = n;
+      localStorage.setItem('my_seat_id', me.id);
+      beat();
+      draw();
+    }
+    return;
+  }
+  if (t.id === 'addCustomId') {
+    const inp = $('#customTarget');
+    if (inp && inp.value) {
+      const n = parseInt(inp.value);
+      if (n && n > 0 && n !== me.id) {
+        targets.clear();
+        targets.add(n);
+        drawPanel();
+      }
+    }
+    return;
+  }
   if (t.dataset.tab) { tab = t.dataset.tab; draw(); return; }
-  if (t.dataset.chip) { const n = +t.dataset.chip; targets.has(n) ? targets.delete(n) : targets.add(n); drawPanel(); return; }
+  if (t.dataset.chip) {
+    const n = +t.dataset.chip;
+    targets.has(n) ? targets.delete(n) : targets.add(n);
+    drawPanel();
+    return;
+  }
   const a = t.dataset.act, i = inbox.find(x => x.oid === t.dataset.oid);
   if (a === 'sendfiles') {
     const files = await Promise.all(staged.map(async f => ({
@@ -441,12 +520,12 @@ document.addEventListener('click', async e => {
   }
   if (a === 'allow' && i) {
     i.status = 'accepting';
-    post({ t: 'ok', oid: i.oid, toUid: i.uid, fromId: me.id });
+    post({ t: 'ok', oid: i.oid, toUid: i.uid, toId: i.from.id, fromId: me.id });
     drawPanel();
   }
   if (a === 'block' && i) {
     i.status = 'blocked';
-    post({ t: 'no', oid: i.oid, toUid: i.uid, fromId: me.id });
+    post({ t: 'no', oid: i.oid, toUid: i.uid, toId: i.from.id, fromId: me.id });
     draw();
   }
   if (a === 'copy' && i) {
@@ -466,7 +545,7 @@ document.addEventListener('input', e => {
   textVal = e.target.value;
   $('#cnt').textContent = (textVal ? textVal.split('\n').length : 0) + ' lines · ' + textVal.length + ' chars';
   const b = document.querySelector('[data-act=sendtext]');
-  if (b) b.disabled = !(textVal.trim() && targets.size && me.id);
+  if (b) b.disabled = !(textVal.trim() && canSend());
 });
 
 const dz = $('#drop');
@@ -478,14 +557,6 @@ dz.addEventListener('drop', e => {
     staged = [...e.dataTransfer.files];
     drawPanel();
   }
-});
-
-$('#join').onclick = () => {
-  room = $('#room').value.trim() || 'CSE-LAB-302';
-  connect();
-};
-$('#room').addEventListener('keydown', e => {
-  if (e.key === 'Enter') $('#join').click();
 });
 
 connect();
